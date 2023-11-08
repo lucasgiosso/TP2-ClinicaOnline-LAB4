@@ -1,22 +1,35 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
+
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { environment } from 'src/environments/environment';
+import { provideAuth,getAuth } from '@angular/fire/auth';
+
 import { AppComponent } from './app.component';
-import { LoginComponent } from './modules/general/login/login.component';
-import { RegisterComponent } from './modules/general/register/register.component';
-import { HomeComponent } from './modules/general/home/home.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BienvenidaComponent } from './modules/general/bienvenida/bienvenida.component';
+import { FirestoreModule, provideFirestore,getFirestore} from '@angular/fire/firestore';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    HomeComponent
+    BienvenidaComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FirestoreModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

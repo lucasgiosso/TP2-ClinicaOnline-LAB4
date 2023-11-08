@@ -1,1 +1,96 @@
-<p>register works!</p>
+
+<body>
+  <div class="login-container" *ngIf="formReg">
+    <h2 class="form-title">Registro</h2>
+    <div class="form-group">
+    
+    </div>
+
+    <form [formGroup]="formReg" (ngSubmit)="onSubmit()">
+      <label for="selectedRole">Selecciona tu perfil:</label>
+      <select id="selectedRole" formControlName="selectedRole">
+        <option value="paciente">Paciente</option>
+        <option value="especialista">Especialista</option>
+      </select>
+
+      <div class="form-group" *ngIf="formReg.get('selectedRole')?.value === 'paciente'">
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" formControlName="nombre" minlength="2" maxlength="35" placeholder="Nombre">
+        
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" formControlName="apellido" minlength="2" maxlength="35" placeholder="Apellido">
+        
+        <label for="edad">Edad:</label>
+        <input type="text" id="edad" formControlName="edad" minlength="1" maxlength="2" placeholder="Edad">
+        
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" formControlName="dni"  minlength="7" maxlength="8" placeholder="DNI">
+        
+        <label for="obraSocial">Obra Social:</label>
+        <input type="text" id="obraSocial" formControlName="obraSocial" placeholder="Obra Social">
+        
+        <label for="email">Mail:</label>
+        <input type="email" id="email" formControlName="email" minlength="6" maxlength="40" placeholder="Email">
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
+
+        <label for="imagenPerfil1">Imagen de perfil 1:</label>
+        <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1">
+        
+        <label for="imagenPerfil2">Imagen de perfil 2:</label>
+        <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2">
+        
+        <button type="submit" [disabled]="formReg.invalid">Registrar</button>
+      </div>
+
+      <div class="form-group" *ngIf="formReg && formReg.get('selectedRole')?.value === 'especialista'">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" formControlName="nombre" minlength="2" maxlength="35" placeholder="Nombre">
+        
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" formControlName="apellido" minlength="2" maxlength="35" placeholder="Apellido">
+        
+        <label for="edad">Edad:</label>
+        <input type="number" id="edad" formControlName="edad" minlength="1" maxlength="2" placeholder="Edad">
+        
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" formControlName="dni" minlength="1" maxlength="2" placeholder="DNI">
+        
+        <label for="especialidad">Especialidad:</label>
+        <select id="especialidad" formControlName="especialidad">
+          <option value="opcion1">Ginecologia</option>
+          <option value="opcion2">Traumatologia</option>
+          <option value="opcion3">Kinesiologia</option>
+          <option value="opcion4">Medico Clinico</option>
+          <option value="otra">Otra</option>
+        </select>
+        
+        <div class="form-group" *ngIf="formReg.get('especialidad')?.value === 'otra'">
+          <label for="otraEspecialidad">Especifica tu especialidad:</label>
+          <input type="text" id="otraEspecialidad" formControlName="otraEspecialidad" minlength="4" maxlength="25" placeholder="Especialidad personalizada">
+        </div>
+        
+        <label for="email">Mail:</label>
+        <input type="email" id="email" formControlName="email" minlength="6" maxlength="40" placeholder="Email">
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
+        
+        <label for="imagenPerfil">Imagen de perfil:</label>
+        <input type="file" id="imagenPerfil" formControlName="imagenPerfil">
+
+        <button type="submit" [disabled]="formReg.invalid">Registrar</button>
+      </div>
+        </form>
+
+        <div class="button-container">
+          <input type="button" [value]="btnVolver" class="btn-primary" (click)="onClick($event)"/>
+          <input type="button" [value]="btnVolverBien" class="btn-success" (click)="onClickWel($event)"/>
+        </div>
+
+  </div>
+</body>
+
+

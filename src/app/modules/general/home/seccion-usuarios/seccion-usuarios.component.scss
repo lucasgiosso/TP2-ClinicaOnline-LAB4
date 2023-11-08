@@ -1,0 +1,174 @@
+
+body {
+    background-color: #dddbdb;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: "Euclid Circular A", "Poppins";
+  }
+  
+  .container {
+    max-width: 915px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.575);
+  }
+  
+
+  header {
+    text-align: center;
+    background-color: #dddbdb;
+    color: #000000;
+    font-size: 24px;
+  }
+
+  nav {
+    background-color: #dddbdb;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+  
+  nav a:hover {
+    color: #c696fd;
+  }
+  
+  .user-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .user {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  
+  .user-info {
+    flex: 1;
+  }
+  
+  .user-actions {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-user-form {
+    max-width: 100%; /* Aprovecha el ancho máximo disponible */
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas iguales */
+    gap: 10px; /* Espacio entre los campos */
+    background-color: #f5f5f5;
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .add-user-form label {
+    font-weight: bold;
+  }
+
+  .add-user-form input,
+  .add-user-form select {
+  width: 100%; /* Los campos ocupan todo el espacio de su celda */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+  
+  .add-user-button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .add-user-button:hover {
+    background-color: #0056b3;
+  }
+  
+  footer {
+    text-align: center;
+    //padding: 10px;
+    background-color: #dddbdb;
+    color: #fff;
+  }
+
+  button {
+    background-color: #28A745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px; 
+    font-weight: bold;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+  
+  button:hover {
+    background-color: #04d454;
+  }
+
+  .disable-access{
+    background-color: #d31c1c;
+  }
+
+  .disable-access:hover {
+    background-color: #ff0000;
+  }
+
+  .edit-user{
+    background-color: #a7a7a7;
+  }
+
+  .edit-user:hover {
+    background-color: #7c7c7c;
+  }
+
+  .btn-success {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 28px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-success:hover {
+    background-color: #7f196e;
+  }
+
+  .center-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //margin-top: 5px;
+  }
+  

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sección de Usuarios</title>
+  <!-- Agrega tus enlaces a hojas de estilo CSS y scripts JavaScript aquí -->
+</head>
+<body>
+  <!-- Encabezado de la página -->
+  <header>
+    <h1>Sección de Usuarios</h1>
+  </header>
+
+  <!-- Barra de navegación para administradores -->
+  <nav>
+    <!-- Agrega enlaces a otras secciones aquí -->
+  </nav>
+
+  <!-- Contenedor principal -->
+  <div class="container">
+    <!-- Lista de usuarios -->
+    <ul class="user-list">
+      <li class="user">
+        <div class="user-info">
+          <h2>Nombre del Usuario</h2>
+          <p>Apellido:</p>
+          <p>Edad:</p>
+          <p>DNI:</p>
+          <p>Mail:</p>
+        </div>
+        <div class="user-actions">
+          <!-- Botones para habilitar/inhabilitar el acceso del Especialista -->
+          <button class="enable-access">Habilitar Especialista</button>
+          <button class="disable-access">Inhabilitar Especialista</button>
+          <!-- Botón para editar el usuario -->
+          <button class="edit-user">Editar Usuario</button>
+        </div>
+      </li>
+
+    </ul>
+
+    
+    <form [formGroup]="formReg" class="add-user-form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+      <label for="selectedRole">Tipo de Usuario:</label>
+      <select id="selectedRole" name="selectedRole" formControlName="selectedRole" required>
+      <option value="admin">Administrador</option>
+      <option value="especialista">Especialista</option>
+      <option value="paciente">Paciente</option>
+      </select>
+    
+    </div>
+      <div class="form-row">
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" formControlName="nombre" minlength="2" maxlength="35" placeholder="Nombre">
+
+      <label for="apellido">Apellido:</label>
+      <input type="text" id="apellido" formControlName="apellido" minlength="2" maxlength="35" placeholder="Apellido">
+
+      <label for="edad">Edad:</label>
+      <input type="text" id="edad" formControlName="edad" minlength="1" maxlength="2" placeholder="Edad">
+
+      <label for="dni">DNI:</label>
+      <input type="text" id="dni" formControlName="dni"  minlength="7" maxlength="8" placeholder="DNI">
+
+      <label for="email">Mail:</label>
+      <input type="email" id="email" formControlName="email" minlength="6" maxlength="35" placeholder="Email">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
+      
+      <label for="imagenPerfil">Imagen de perfil:</label>
+      <input type="file" id="imagenPerfil" formControlName="imagenPerfil">
+      <button type="submit" class="add-user-button">Agregar Usuario</button>
+    </div>
+
+      <div class="form-group" *ngIf="formReg.get('selectedRole')?.value === 'paciente'">
+        <label for="obraSocial">Obra Social:</label>
+        <input type="text" id="obraSocial" formControlName="obraSocial" placeholder="Obra Social">
+        <label for="imagenPerfil">Imagen de perfil 2:</label>
+        <input type="file" id="imagenPerfil2" formControlName="imagenPerfil">
+        
+      </div>
+      
+      <div class="form-group" *ngIf="formReg.get('selectedRole')?.value === 'especialista'">
+        
+        <label for="especialidad">Especialidad:</label>
+        <select id="especialidad" formControlName="especialidad">
+          <option value="opcion1">Ginecologia</option>
+          <option value="opcion2">Traumatologia</option>
+          <option value="opcion3">Kinesiologia</option>
+          <option value="opcion4">Medico Clinico</option>
+          <option value="otra">Otra</option>
+        </select>
+        
+        <div class="form-group" *ngIf="formReg.get('especialidad')?.value === 'otra'">
+          <label for="otraEspecialidad">Especifica tu especialidad:</label>
+          <input type="text" id="otraEspecialidad" formControlName="otraEspecialidad" minlength="4" maxlength="25" placeholder="Especialidad personalizada">
+        </div>
+    </div>
+    </form>
+  </div>
+  
+  <footer>
+
+  </footer>
+  <div class="center-button">
+    <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
+  </div>
+</body>
+</html>
+

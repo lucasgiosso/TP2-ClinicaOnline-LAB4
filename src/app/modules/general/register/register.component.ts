@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit{
   btnVolverBien = 'Volver a inicio';
   selectedRole: string = '';
   mostrarOtraEspecialidad: boolean = true;
+  showLoading: boolean = true;
 
   constructor(private formBuilder: FormBuilder,
     //private userService: UserService,
@@ -44,7 +45,11 @@ export class RegisterComponent implements OnInit{
     });
   }
 
-  ngOnInit() : void{}
+  ngOnInit() : void{
+    
+    setTimeout(() => {
+    this.showLoading = false;
+  }, 1000);}
 
     togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;

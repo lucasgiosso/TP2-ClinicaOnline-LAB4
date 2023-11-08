@@ -1,5 +1,5 @@
 <body>
-  
+  <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
     <div class="navbar-custom">
       <!-- <a (click)="toggleDropdown()" *ngIf="currentUser$ | async as user" >
         <img *ngIf="user.photoURL" src="{{user.photoURL}}" alt="Foto de perfil de usuario" class="user-photo">

@@ -11,15 +11,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BienvenidaComponent } from './modules/general/bienvenida/bienvenida.component';
 import { FirestoreModule, provideFirestore,getFirestore} from '@angular/fire/firestore';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-
-
+import { SharedComponent } from './shared/shared.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    BienvenidaComponent
+    BienvenidaComponent,
+    SharedComponent,
+
   ],
   imports: [
     BrowserModule,

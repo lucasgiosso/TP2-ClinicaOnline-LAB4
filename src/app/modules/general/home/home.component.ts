@@ -14,6 +14,7 @@ interface SideNavToggle {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit{
+  showLoading: boolean = true;
 
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
     collapsed = false;
@@ -36,6 +37,11 @@ onResize(event: any){
 }
 
 ngOnInit(): void {
+
+  setTimeout(() => {
+    this.showLoading = false;
+  }, 1000);
+
   this.screenWidth = window.innerWidth;
   //this.currentUser$ = this.userService.getCurrentUser();
 }

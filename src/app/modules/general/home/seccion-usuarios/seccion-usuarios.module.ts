@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SeccionUsuariosComponent } from './seccion-usuarios.component';
 import { SeccionUsuariosRoutingModule } from './seccion-usuarios-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -11,6 +12,7 @@ import { SeccionUsuariosRoutingModule } from './seccion-usuarios-routing.module'
     SeccionUsuariosRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule
   ],
   declarations: [
     SeccionUsuariosComponent

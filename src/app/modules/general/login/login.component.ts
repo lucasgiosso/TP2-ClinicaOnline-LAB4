@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
 import { User } from 'firebase/auth';
@@ -27,20 +27,29 @@ import { User } from 'firebase/auth';
 
     email: string = '';
     password: string = '';
+    showLoading: boolean = true;
 
 
     // constructor(private router: Router, private fb: FormBuilder,private userService: UserService )
     constructor(private router: Router, private fb: FormBuilder )
     {
+      console.log(this.showLoading);
+
       this.formLogin = this.fb.group({email: ['', [Validators.required, Validators.email]],
                                       password: ['', [Validators.required]],
                                     });
     }
 
     ngOnInit(): void {
+
+            setTimeout(() => {
+        this.showLoading = false;
+      }, 1000);
+
       this.formLogin = this.fb.group({email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
+    
       }
 
     //   onSubmit() {

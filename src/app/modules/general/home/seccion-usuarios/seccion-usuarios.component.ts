@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -7,11 +7,12 @@ import { Router } from '@angular/router';
   templateUrl: './seccion-usuarios.component.html',
   styleUrls: ['./seccion-usuarios.component.scss']
 })
-export class SeccionUsuariosComponent {
+export class SeccionUsuariosComponent implements OnInit{
 
   btnVolver = 'Volver a inicio';
   formReg: FormGroup;
   selectedRole: string = '';
+  showLoading: boolean = true;
 
   constructor (private router: Router, private formBuilder : FormBuilder) {
     this.formReg = new FormGroup({
@@ -32,6 +33,12 @@ export class SeccionUsuariosComponent {
     });
     
   }
+
+  ngOnInit() : void{
+    
+    setTimeout(() => {
+    this.showLoading = false;
+  }, 1000);}
 
   onSubmit() {};
 

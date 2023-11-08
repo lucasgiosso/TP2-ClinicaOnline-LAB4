@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MisTurnosComponent } from './mis-turnos.component';
 import { MisTurnosRoutingModule } from './mis-turnos-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -11,6 +12,7 @@ import { MisTurnosRoutingModule } from './mis-turnos-routing.module';
     MisTurnosRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    SharedModule
   ],
   declarations: [
     MisTurnosComponent

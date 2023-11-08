@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,11 +6,18 @@ import { Router } from '@angular/router';
   templateUrl: './mis-turnos.component.html',
   styleUrls: ['./mis-turnos.component.scss']
 })
-export class MisTurnosComponent {
+export class MisTurnosComponent implements OnInit{
 
   btnVolver = 'Volver a inicio';
+  showLoading: boolean = true;
 
   constructor (private router: Router) {}
+
+  ngOnInit() : void{
+    
+    setTimeout(() => {
+    this.showLoading = false;
+  }, 1000);}
 
   public onClickHome(event: any): void 
   {

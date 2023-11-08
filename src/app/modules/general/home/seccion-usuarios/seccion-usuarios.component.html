@@ -2,22 +2,22 @@
 <html>
 <head>
   <title>Sección de Usuarios</title>
-  <!-- Agrega tus enlaces a hojas de estilo CSS y scripts JavaScript aquí -->
+  
 </head>
 <body>
-  <!-- Encabezado de la página -->
+  <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
+
   <header>
     <h1>Sección de Usuarios</h1>
   </header>
 
-  <!-- Barra de navegación para administradores -->
+
   <nav>
-    <!-- Agrega enlaces a otras secciones aquí -->
+
   </nav>
 
-  <!-- Contenedor principal -->
+
   <div class="container">
-    <!-- Lista de usuarios -->
     <ul class="user-list">
       <li class="user">
         <div class="user-info">
@@ -28,10 +28,10 @@
           <p>Mail:</p>
         </div>
         <div class="user-actions">
-          <!-- Botones para habilitar/inhabilitar el acceso del Especialista -->
+       
           <button class="enable-access">Habilitar Especialista</button>
           <button class="disable-access">Inhabilitar Especialista</button>
-          <!-- Botón para editar el usuario -->
+
           <button class="edit-user">Editar Usuario</button>
         </div>
       </li>

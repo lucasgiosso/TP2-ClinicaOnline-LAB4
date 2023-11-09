@@ -12,9 +12,9 @@ export const navbarData = [
         label: 'Usuarios'
     },
 
-    {
-        routeLink: 'logout',
-        icon: 'fa solid fa-power-off',
-        label: 'Cerrar sesión'
-    }
+    // {
+    //     routeLink: 'logout',
+    //     icon: 'fa solid fa-power-off',
+    //     label: 'Cerrar sesión'
+    // }
 ]

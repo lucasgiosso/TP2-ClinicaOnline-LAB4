@@ -3,7 +3,7 @@ import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
-import { User } from 'firebase/auth';
+import { User, UserCredential } from 'firebase/auth';
 
 @Component({
     selector: 'app-login',
@@ -22,29 +22,26 @@ import { User } from 'firebase/auth';
     defaultEmailEspecialista = 'especialista@clinica-online.com';
     defaultPasswordEspecialista = '123456';
 
-    defaultEmailPaciente = 'paciente@clinica-online.com';
+    defaultEmailPaciente = 'lucasdiazgiosso@gmail.com';
     defaultPasswordPaciente = '123456';
 
     email: string = '';
     password: string = '';
     showLoading: boolean = true;
 
-
-    // constructor(private router: Router, private fb: FormBuilder,private userService: UserService )
-    constructor(private router: Router, private fb: FormBuilder )
+    constructor(private router: Router, private fb: FormBuilder,private userService: UserService )
     {
-      console.log(this.showLoading);
-
-      this.formLogin = this.fb.group({email: ['', [Validators.required, Validators.email]],
-                                      password: ['', [Validators.required]],
-                                    });
+      this.formLogin = this.fb.group(
+        { email: ['', [Validators.required, Validators.email]],
+          password: ['', [Validators.required]]});
     }
 
     ngOnInit(): void {
 
-            setTimeout(() => {
+      setTimeout(() => 
+      {
         this.showLoading = false;
-      }, 1000);
+      }, 2000);
 
       this.formLogin = this.fb.group({email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
@@ -52,37 +49,50 @@ import { User } from 'firebase/auth';
     
       }
 
-    //   onSubmit() {
-    //     this.userService.login(this.formLogin.value)
-    //       .then(response => {
-    //         console.log(response);
-    //         Swal.fire({
-    //             icon: 'success',
-    //             title: 'Inicio de sesión exitoso',
-    //             text: '¡Bienvenido!',
-    //             confirmButtonText: 'OK'
-    //         }).then(() => {
-    //             this.router.navigate(['/home']);
-    //         });
-    //       })
-    //       .catch((error: any) => {
-    //         console.error(error);
-    //         let errorMessage = 'Error al iniciar sesión. Por favor, verifica tu correo electrónico y contraseña.';
-    //         if (error.code === 'auth/user-not-found') {
-    //             errorMessage = 'El correo electrónico no existe. Por favor, verifica.';
-    //         } else if (error.code === 'auth/wrong-password') {
-    //             errorMessage = 'La contraseña es incorrecta. Por favor, verifica.';
-    //         }
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Oops...',
-    //             text: errorMessage,
-    //         });
-    //     });
-    // }
+      onSubmit() {
 
-    onSubmit() {};
+        this.userService.login(this.formLogin.value)
+          .then((userCredential: UserCredential) => {
+            const user = userCredential.user;
+            if (user.emailVerified) {
 
+              console.log('Inicio de sesión exitoso');
+              Swal.fire({
+                icon: 'success',
+                title: 'Inicio de sesión exitoso',
+                text: '¡Bienvenido!',
+                confirmButtonText: 'OK'
+              }).then(() => {
+                this.router.navigate(['/home']);
+              });
+            } else {
+
+              Swal.fire({
+                icon: 'error',
+                title: 'Error en el inicio de sesión',
+                text: 'Debes verificar tu correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a tu dirección de correo.',
+              });
+
+            }
+          })
+          .catch((error: any) => {
+            console.error(error);
+            let errorMessage = 'Error al iniciar sesión. Por favor, verifica tu correo electrónico y contraseña.';
+            if (error.code === 'auth/user-not-found') {
+              errorMessage = 'El correo electrónico no existe. Por favor, verifica.';
+            } else if (error.code === 'auth/wrong-password') {
+              errorMessage = 'La contraseña es incorrecta. Por favor, verifica.';
+            }
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: errorMessage,
+            });
+          });
+      }
+
+      
+      
     loginLoadAdmin(): void{
       this.formLogin.setValue({email: this.defaultEmailAdmin, password: this.defaultPasswordAdmin});
     }

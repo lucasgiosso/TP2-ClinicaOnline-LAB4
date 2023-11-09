@@ -16,17 +16,33 @@
 
       <div class="form-group" *ngIf="formReg.get('selectedRole')?.value === 'paciente'">
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" formControlName="nombre" minlength="2" maxlength="35" placeholder="Nombre">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" formControlName="nombre" id="nombre" minlength="3" maxlength="20" placeholder="" required
+                [class.campo-con-error]="getValue('nombre').invalid && (getValue('nombre').touched || getValue('nombre').dirty)">
+        <div class="errorMessage" *ngIf="getValue('nombre')?.invalid && (getValue('nombre').touched || getValue('nombre').dirty)">
+          Por favor, ingrese su nombre.
+        </div>
         
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" formControlName="apellido" minlength="2" maxlength="35" placeholder="Apellido">
+        <label for="apellido" class="form-label">Apellido</label>
+        <input type="text" class="form-control" formControlName="apellido" id="apellido" minlength="3" maxlength="20" placeholder="" required
+                [class.campo-con-error]="getValue('apellido').invalid && (getValue('apellido').touched || getValue('apellido').dirty)">
+        <div class="errorMessage" *ngIf="getValue('apellido')?.invalid && (getValue('apellido').touched || getValue('apellido').dirty)">
+          Por favor, ingrese su apellido.
+        </div>
         
-        <label for="edad">Edad:</label>
-        <input type="text" id="edad" formControlName="edad" minlength="1" maxlength="2" placeholder="Edad">
+        <label for="edad" class="form-label">Edad</label>
+        <input type="text" class="form-control" formControlName="edad" id="edad" placeholder="" minlength="2" maxlength="2" required
+                  [class.campo-con-error]="getValue('edad').invalid && (getValue('edad').touched || getValue('edad').dirty)">
+        <div class="errorMessage" *ngIf="getValue('edad')?.invalid && (getValue('edad').touched || getValue('edad').dirty)">
+          Por favor, ingrese su edad. Debe ser mayor de 18.
+        </div>
         
-        <label for="dni">DNI:</label>
-        <input type="text" id="dni" formControlName="dni"  minlength="7" maxlength="8" placeholder="DNI">
+        <label for="dni" class="form-label">DNI</label>
+        <input type="text" class="form-control" formControlName="dni" id="dni" placeholder="" minlength="7" maxlength="8" required
+               [class.campo-con-error]="getValue('dni').invalid && (getValue('dni').touched || getValue('dni').dirty)">
+        <div class="errorMessage" *ngIf=" getValue('dni').invalid && (getValue('dni').touched || getValue('dni').dirty)">
+          Por favor, ingrese su DNI. Deben ser 8 caracteres sin punto.
+        </div>
         
         <label for="obraSocial">Obra Social:</label>
         <input type="text" id="obraSocial" formControlName="obraSocial" placeholder="Obra Social">
@@ -37,12 +53,27 @@
         <label for="password">Password:</label>
         <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
 
-        <label for="imagenPerfil1">Imagen de perfil 1:</label>
-        <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1">
-        
+        <label for="password">Confirmar Password:</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" minlength="6" maxlength="8" placeholder="Confirmar Contraseña">
+
+        <!-- <label for="imagenPerfil1">Imagen de perfil 1:</label>
+        <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1" accept="image/*">
+        <div *ngIf="formReg.get('imagenPerfil1')?.hasError('required')">
+          Debes cargar una imagen.
+        </div>
+        <div *ngIf="formReg.get('imagenPerfil1')?.hasError('invalidImage')">
+          Debes cargar una imagen válida.
+        </div>
+        <div *ngIf="formReg.get('imagenPerfil1')?.hasError('invalidSize')">
+          La imagen tiene un tamaño incorrecto.
+        </div>
+ 
         <label for="imagenPerfil2">Imagen de perfil 2:</label>
-        <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2">
-        
+        <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2" accept="image/*">
+        <div *ngIf="formReg.get('imagenPerfil2')?.hasError('invalidImage')">
+          Debes cargar una imagen válida.
+        </div> -->
+              
         <button type="submit" [disabled]="formReg.invalid">Registrar</button>
       </div>
 
@@ -78,9 +109,17 @@
         
         <label for="password">Password:</label>
         <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
+
+        <label for="password">Confirmar Password:</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" minlength="6" maxlength="8" placeholder="Confirmar Contraseña">
         
         <label for="imagenPerfil">Imagen de perfil:</label>
-        <input type="file" id="imagenPerfil" formControlName="imagenPerfil">
+        <input type="file" id="imagenPerfil" formControlName="imagenPerfil1" accept="image/*">
+        <div *ngIf="formReg.hasError('invalidImage', 'imagenPerfil')">
+          Debes cargar una imagen válida.
+        </div>
+        <!-- <img [src]="formReg.get('imagenPerfil')?.value | noimage" alt="Imagen de perfil"> -->
+        
 
         <button type="submit" [disabled]="formReg.invalid">Registrar</button>
       </div>

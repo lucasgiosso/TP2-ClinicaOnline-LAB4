@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserCredential } from '@angular/fire/auth';
+import { UserCredential, sendEmailVerification } from '@angular/fire/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, fetchSignInMethodsForEmail } from '@angular/fire/auth';
 import { DataServices } from './data.service';
@@ -21,10 +21,30 @@ export class UserService {
     
   }
 
-  async register(email: string, password: string) 
-  {
-    const user = await createUserWithEmailAndPassword(this.auth,email, password);
-    return await signInWithEmailAndPassword(this.auth,email, password);
+  // async register(email: string, password: string) 
+  // {
+  //   const user = await createUserWithEmailAndPassword(this.auth,email, password);
+  //   return await signInWithEmailAndPassword(this.auth,email, password);
+  // }
+
+  async register(email: string, password: string) {
+
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      //const user = userCredential.user;      
+  
+      return userCredential;
+
+      // if (user && user.emailVerified) {
+      //   return userCredential;
+      // } 
+      // else {
+
+      //   await sendEmailVerification(user);
+  
+      //   await signOut(this.auth);
+  
+      //   throw new Error('Debes verificar tu correo electrónico antes de iniciar sesión.');
+      // }
   }
 
   checkIfUserExists(email: string) {
@@ -42,7 +62,7 @@ export class UserService {
       .then((userCredential: UserCredential) => {
         const user = userCredential.user;
 
-        const userDocRef = doc(collection(this.firestore, 'users&role'), user.uid);
+        const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
 
         getDoc(userDocRef)
           .then((userDoc) => {

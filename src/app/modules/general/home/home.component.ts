@@ -2,6 +2,9 @@ import { Component, EventEmitter, HostListener, Output, OnInit } from '@angular/
 import { Router } from '@angular/router';
 import { navbarData } from './home-data';
 import { Observable } from 'rxjs';
+import { UserService } from 'src/app/services/user.service';
+import { Auth, User } from '@angular/fire/auth';
+import Swal from 'sweetalert2';
 
 interface SideNavToggle {
   screenWidth: number;
@@ -13,6 +16,7 @@ interface SideNavToggle {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
+
 export class HomeComponent implements OnInit{
   showLoading: boolean = true;
 
@@ -20,12 +24,13 @@ export class HomeComponent implements OnInit{
     collapsed = false;
     screenWidth = 0;
     navData = navbarData;
-    //currentUser$: Observable<User | null>;
-    currentUser$: any;
+    currentUser$: Observable<User | null>;
     isDropdownOpen = false;
     showLogoutButton = false;
 
-constructor (private router: Router) {}
+constructor (private router: Router, private userService: UserService, private auth: Auth) {
+  this.currentUser$ = this.userService.getCurrentUser();
+}
 
 @HostListener('window:resize', ['$event'])
 onResize(event: any){
@@ -40,10 +45,10 @@ ngOnInit(): void {
 
   setTimeout(() => {
     this.showLoading = false;
-  }, 1000);
+  }, 2000);
 
   this.screenWidth = window.innerWidth;
-  //this.currentUser$ = this.userService.getCurrentUser();
+  this.currentUser$ = this.userService.getCurrentUser();
 }
 
 toggleCollapse(): void{
@@ -63,9 +68,40 @@ handleNavigation(routeLink: string) {
   }
 }
 
-logout() {}
+async logout() {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Lamentamos que quieras salir...',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, salir'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        console.log('Route link clicked: logout');
+        await this.auth.signOut();
+        this.router.navigate(['/login']);
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+      }
+    } else {
+      this.router.navigate(['/home']);
+    }
+  });
+}
 
-userLogged() {}
+userLogged() {
+  this.userService.getCurrentUser().subscribe(
+    (user) => {
+      console.log(user?.email);
+    },
+    (error) => {
+      console.error('Error al obtener el usuario actual:', error);
+    }
+  );
+}
 
 toggleDropdown() {
   this.isDropdownOpen = !this.isDropdownOpen;

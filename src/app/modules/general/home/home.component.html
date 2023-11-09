@@ -1,11 +1,11 @@
 <body>
   <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
     <div class="navbar-custom">
-      <!-- <a (click)="toggleDropdown()" *ngIf="currentUser$ | async as user" >
+      <a class="user-color" (click)="toggleDropdown()" *ngIf="currentUser$ | async as user" >
         <img *ngIf="user.photoURL" src="{{user.photoURL}}" alt="Foto de perfil de usuario" class="user-photo">
         <img *ngIf="!user.photoURL" src="https://firebasestorage.googleapis.com/v0/b/tp-sala-de-juegos-diazgiossol.appspot.com/o/guest.webp?alt=media&token=69e91e4a-832d-4439-ab69-a30e2c8d80ee"  class="user-photo">
         {{ user.displayName?user.displayName : user.email }} 
-      </a> -->
+      </a>
       <div class="dropdown-content" *ngIf="isDropdownOpen">
         <button class="logout-button" *ngIf="showLogoutButton" (click)="logout()">
           <i class="fa solid fa-power-off"></i> Cerrar Sesión
@@ -23,7 +23,7 @@
           </button>
       </div>
   
-      <!-- <div *ngIf="currentUser$ | async as user"> -->
+      <div *ngIf="currentUser$ | async as user">
         <ul class="sidenav-nav">
           <li class="sidenav-nav-item" *ngFor="let data of navData">
             <a class="sidenav-nav-link" [routerLink]="[data.routeLink]"
@@ -35,7 +35,7 @@
             </a>
           </li>
         </ul>
-      <!-- </div> -->
+      </div>
 
     </div>
   </body>

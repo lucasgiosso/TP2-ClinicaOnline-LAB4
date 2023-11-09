@@ -1,15 +1,4 @@
 export const navbarData = [
-    // {
-    //     routeLink: 'homepage',
-    //     icon: 'fal fa-home',
-    //     label: 'Homepage'
-    // },
-
-    // {
-    //     routeLink: 'usuarios',
-    //     icon: 'fa regular fa-address-card',
-    //     label: 'Mis Turnos'
-    // },
 
     {
         routeLink: 'turnos',

@@ -6,6 +6,7 @@ import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from 'src/environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 
+import { DataServices } from '../app/services/data.service';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BienvenidaComponent } from './modules/general/bienvenida/bienvenida.component';
@@ -18,7 +19,7 @@ import { SharedComponent } from './shared/shared.component';
   declarations: [
     AppComponent,
     BienvenidaComponent,
-    SharedComponent,
+    SharedComponent
 
   ],
   imports: [
@@ -31,7 +32,7 @@ import { SharedComponent } from './shared/shared.component';
     provideFirestore(() => getFirestore()),
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [DataServices],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

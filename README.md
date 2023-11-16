@@ -1,5 +1,7 @@
 # Clinica Online
 
+Si queres saber mas sobre este proyecto ingresa [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
 
 ## Development server

@@ -2,9 +2,6 @@
 
 ## Si queres conocer mas sobre este proyecto ingresa -> [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
 
-#
-
-#
 
 
 <br>
@@ -18,8 +15,12 @@
 <br>
 <br>
 <br>
+<br>
+<br>
+<br>
+<br>
 
-#
+
 
 # Detalles técnicos
 

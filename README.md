@@ -1,29 +1,27 @@
 # Clinica Online
 
-## SI TE INTERESA SABER MÁS SOBRE ESTE PROYECTO INGRESA [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
+## Si queres conocer mas sobre este proyecto ingresa -> [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
+
+#
+
+#
 
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
+#
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Detalles técnicos
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
 

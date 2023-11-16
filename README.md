@@ -3,7 +3,7 @@
 ## Si queres conocer más detalles funcionales sobre este proyecto ingresa -> [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
 
 <p align="center">
-  <img width="500" height="500" src="file:///C:/Users/lucas/Desktop/Extras%20TP%202/Favicon/Logo.png">
+  <img width="500" height="500" src="https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/src/assets/logo.png">
 </p>
 <br>
 <br>

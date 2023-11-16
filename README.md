@@ -1,6 +1,6 @@
 # Clinica Online
 
-## Si queres conocer mas sobre este proyecto ingresa -> [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
+## Si queres conocer más detalles funcionales sobre este proyecto ingresa -> [aqui](https://github.com/lucasgiosso/TP2-ClinicaOnline-LAB4/blob/main/Readme.pdf).
 
 
 

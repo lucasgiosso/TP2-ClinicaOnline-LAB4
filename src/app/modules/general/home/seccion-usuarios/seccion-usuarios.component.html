@@ -7,17 +7,16 @@
 <body>
   <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
 
-  <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
   <div class="navbar-custom">
-    <a class="user-color" (click)="toggleDropdown()" *ngIf="currentUser$ | async as user" >
+    <a class="user-color" (click)="toggleDropdown()" class="user-photo" *ngIf="currentUser$ | async as user" >
       <img *ngIf="user.photoURL" src="{{user.photoURL}}" alt="Foto de perfil de usuario" class="user-photo">
       <img *ngIf="!user.photoURL" src="https://firebasestorage.googleapis.com/v0/b/tp-sala-de-juegos-diazgiossol.appspot.com/o/guest.webp?alt=media&token=69e91e4a-832d-4439-ab69-a30e2c8d80ee"  class="user-photo">
       {{ user.displayName?user.displayName : user.email }} 
     </a>
     <div class="dropdown-content" *ngIf="isDropdownOpen">
-      <!-- <button class="logout-button" *ngIf="showLogoutButton" (click)="logout()">
+      <button class="logout-button" *ngIf="showLogoutButton" (click)="logout()">
         <i class="fa solid fa-power-off"></i> Cerrar Sesión
-      </button> -->
+      </button>
     </div>
   </div>
 
@@ -25,34 +24,34 @@
     <h1>Sección de Usuarios</h1>
   </header>
 
-
   <nav>
 
   </nav>
-
-
   <div class="container">
+    <div class="users-column">
+      <h2 class="sticky-header">Pendientes de aprobación</h2>
     <ul class="user-list">
-      <li class="user">
+      <li class="user" *ngFor="let usuario of usuariosPendientes">
         <div class="user-info">
-          <h2>Nombre del Usuario</h2>
-          <p>Apellido:</p>
-          <p>Edad:</p>
-          <p>DNI:</p>
-          <p>Mail:</p>
+          <h3>{{ usuario.nombre }} {{ usuario.apellido }}</h3>
+          <p>Edad: {{ usuario.edad }}</p>
+          <p>DNI: {{ usuario.dni }}</p>
+          <p>Mail: {{ usuario.mail }}</p>
+          <p>Imagen:</p>
+          <img [src]="usuario.imagenPerfil" alt="Imagen de perfil">
         </div>
-        <div class="user-actions">
-       
-          <button class="enable-access">Habilitar Especialista</button>
-          <button class="disable-access">Inhabilitar Especialista</button>
 
+        <div class="user-actions">
+          <button class="enable-access" (click)="aprobarUsuario(usuario.id)" *ngIf="!usuario.aprobado">Habilitar Especialista</button>
+          <button class="disable-access" *ngIf="usuario.aprobado">Inhabilitar Especialista</button>
           <button class="edit-user">Editar Usuario</button>
         </div>
       </li>
-
     </ul>
-
-    
+  </div>
+</div>
+  <div class="container">
+    <h2>Crear usuario</h2>
     <form [formGroup]="formReg" class="add-user-form" (ngSubmit)="onSubmit()">
       <div class="form-row">
       <label for="selectedRole">Tipo de Usuario:</label>
@@ -65,23 +64,54 @@
     </div>
       <div class="form-row">
 
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" formControlName="nombre" minlength="2" maxlength="35" placeholder="Nombre">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" formControlName="nombre" id="nombre" minlength="3" maxlength="20" placeholder="" required
+                [class.campo-con-error]="getValue('nombre').invalid && (getValue('nombre').touched || getValue('nombre').dirty)">
+        <div class="errorMessage" *ngIf="getValue('nombre')?.invalid && (getValue('nombre').touched || getValue('nombre').dirty)">
+          Por favor, ingrese su nombre.
+        </div>
 
-      <label for="apellido">Apellido:</label>
-      <input type="text" id="apellido" formControlName="apellido" minlength="2" maxlength="35" placeholder="Apellido">
+        <label for="apellido" class="form-label">Apellido</label>
+        <input type="text" class="form-control" formControlName="apellido" id="apellido" minlength="3" maxlength="20" placeholder="" required
+                [class.campo-con-error]="getValue('apellido').invalid && (getValue('apellido').touched || getValue('apellido').dirty)">
+        <div class="errorMessage" *ngIf="getValue('apellido')?.invalid && (getValue('apellido').touched || getValue('apellido').dirty)">
+          Por favor, ingrese su apellido.
+        </div>
 
-      <label for="edad">Edad:</label>
-      <input type="text" id="edad" formControlName="edad" minlength="1" maxlength="2" placeholder="Edad">
+        <label for="edad" class="form-label">Edad</label>
+        <input type="text" class="form-control" formControlName="edad" id="edad" placeholder="" minlength="2" maxlength="2" required
+                  [class.campo-con-error]="getValue('edad').invalid && (getValue('edad').touched || getValue('edad').dirty)">
+        <div class="errorMessage" *ngIf="getValue('edad')?.invalid && (getValue('edad').touched || getValue('edad').dirty)">
+          Por favor, ingrese su edad. Debe ser mayor de 18.
+        </div>
 
-      <label for="dni">DNI:</label>
-      <input type="text" id="dni" formControlName="dni"  minlength="7" maxlength="8" placeholder="DNI">
+        <label for="dni" class="form-label">DNI</label>
+        <input type="text" class="form-control" formControlName="dni" id="dni" placeholder="" minlength="7" maxlength="8" required
+               [class.campo-con-error]="getValue('dni').invalid && (getValue('dni').touched || getValue('dni').dirty)">
+        <div class="errorMessage" *ngIf=" getValue('dni').invalid && (getValue('dni').touched || getValue('dni').dirty)">
+          Por favor, ingrese su DNI. Deben ser 8 caracteres sin punto.
+        </div>
 
-      <label for="email">Mail:</label>
-      <input type="email" id="email" formControlName="email" minlength="6" maxlength="35" placeholder="Email">
+        <label for="email">Mail</label>
+        <input type="email" id="email" formControlName="email" minlength="6" maxlength="40" placeholder="Email"required
+        [class.campo-con-error]="getValue('email').invalid && (getValue('email').touched || getValue('email').dirty)">
+        <div class="errorMessage" *ngIf=" getValue('email').invalid && (getValue('email').touched || getValue('email').dirty)">
+        Por favor, complete su mail.
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" formControlName="password" minlength="6" maxlength="8" placeholder="Contraseña" required
+        [class.campo-con-error]="getValue('password').invalid && (getValue('password').touched || getValue('password').dirty)">
+        <div class="errorMessage" *ngIf=" getValue('password').invalid && (getValue('password').touched || getValue('password').dirty)">
+        Por favor, ingrese su contraseña. Deben ser como minimo 6 caracteres.
+        </div>
+
+        <label for="confirmPassword">Reingresar contraseña</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" minlength="6" maxlength="8" placeholder="Reingresar Contraseña" required
+        [class.campo-con-error]="getValue('confirmPassword').invalid && (getValue('confirmPassword').touched || getValue('confirmPassword').dirty)">
+        <div class="errorMessage" *ngIf=" getValue('confirmPassword').invalid && (getValue('confirmPassword').touched || getValue('confirmPassword').dirty)">
+        Por favor, reingrese su contraseña.
+        </div>
       
       <label for="imagenPerfil">Imagen de perfil:</label>
       <input type="file" id="imagenPerfil" formControlName="imagenPerfil">
@@ -103,7 +133,7 @@
           <option value="opcion1">Ginecologia</option>
           <option value="opcion2">Traumatologia</option>
           <option value="opcion3">Kinesiologia</option>
-          <option value="opcion4">Medico Clinico</option>
+          <option value="opcion4">Nutricionista</option>
           <option value="otra">Otra</option>
         </select>
         

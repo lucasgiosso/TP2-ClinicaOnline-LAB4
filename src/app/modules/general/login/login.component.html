@@ -17,13 +17,19 @@
             <input type="password" id="password" formControlName="password" placeholder="Contraseña" required>
           </div>
     
+          <div class="button-container">
           <button type="submit">Iniciar sesión</button>
-  
-          <button type="button" (click)="loginLoadAdmin()">Autocompletar admin</button>
-          <button type="button" (click)="loginLoadEspecialista()">Autocompletar especialista</button>
-          <button type="button" (click)="loginLoadPaciente()">Autocompletar paciente</button>
+          <div class="AC-derecha">
+            <button type="button" (click)="loginLoad('admin')" (click)="loginLoadAdmin()">Acceso rápido Admin</button>
+            <button type="button" (click)="loginLoad('especialista1')" (click)="loginLoadEspecialista1()">Acceso rápido especial. 1</button>
+            <button type="button" (click)="loginLoad('especialista2')" (click)="loginLoadEspecialista2()">Acceso rápido especial. 2</button>
+            <button type="button" (click)="loginLoad('paciente1')" (click)="loginLoadPaciente1()">Acceso rápido paciente 1</button>
+            <button type="button" (click)="loginLoad('paciente2')" (click)="loginLoadPaciente2()">Acceso rápido paciente 2</button>
+            <button type="button" (click)="loginLoad('paciente3')" (click)="loginLoadPaciente3()">Acceso rápido paciente 3</button>
+          </div>
+        </div>
           <button type="button" (click)="onClickWel($event)">Volver a inicio</button>
-  
+
           <div class="register">
             <p>No tenes una cuenta<span class="icon icon--info">?</span><a (click)="onRegister()" style="cursor: pointer;">Registrate !</a></p>        
           </div>

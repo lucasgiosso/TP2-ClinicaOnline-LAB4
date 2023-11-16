@@ -6,6 +6,8 @@ import { RegisterComponent } from './register.component';
 import { RegisterRoutingModule } from './register-routing.module';
 import { SharedModule } from '../../../shared/shared.module';
 import { NoimagePipe } from 'src/app/pipes/noimage.pipe';
+import { NgxCaptchaModule } from 'ngx-captcha';
+
 
 @NgModule({
   imports: [
@@ -13,11 +15,12 @@ import { NoimagePipe } from 'src/app/pipes/noimage.pipe';
     RegisterRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    NgxCaptchaModule
   ],
   declarations: [
     RegisterComponent,
-    NoimagePipe
+    NoimagePipe,
   ]
 })
 export class RegisterModule { }

@@ -4,8 +4,11 @@ import { UserService } from 'src/app/services/user.service';
 import { Firestore,collection,doc, setDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { NoimagePipe } from 'src/app/pipes/noimage.pipe';
 import { User, sendEmailVerification } from 'firebase/auth';
+import { HttpClient } from '@angular/common/http';
+import { RecaptchaService } from 'src/app/services/recaptcha.service'
+import { finalize, map } from 'rxjs';
+import { getStorage, ref, uploadBytes, getDownloadURL, StorageReference, UploadTaskSnapshot, UploadTask, uploadBytesResumable, UploadResult } from 'firebase/storage';
 
 
 @Component({
@@ -15,6 +18,11 @@ import { User, sendEmailVerification } from 'firebase/auth';
 })
 export class RegisterComponent implements OnInit{
 
+  protected aFormGroup: FormGroup;
+ 
+  captchaImage: string = "";
+  correctAnswer: string = "";
+
   formReg: FormGroup;
   hidePassword: boolean = true; 
   btnVolver = 'Iniciar sesión';
@@ -22,33 +30,56 @@ export class RegisterComponent implements OnInit{
   selectedRole: string = '';
   mostrarOtraEspecialidad: boolean = true;
   showLoading: boolean = true;
+  showCaptcha: boolean = false;
+  
+
+  sitekey: string = "";
 
   constructor(private formBuilder: FormBuilder,
     private userService: UserService,
     private router: Router,
-    private firestore: Firestore)
+    private firestore: Firestore,
+    private http: HttpClient,
+    private captchaService: RecaptchaService)
   
   {
  
     this.formReg = new FormGroup({
       selectedRole: new FormControl('', [Validators.required]),
-      nombre: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
-      apellido: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      edad: new FormControl('', [Validators.required, Validators.min(18), Validators.max(99)]),
+      nombre: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20),Validators.pattern(/^[a-zA-Z]+$/)]),
+      apellido: new FormControl('', [Validators.required, Validators.minLength(3),Validators.pattern(/^[a-zA-Z]+$/)]),
+      edad: new FormControl('', [Validators.required, Validators.pattern("^[0-9]+"),Validators.min(18), Validators.max(99)]),
       dni: new FormControl('', [Validators.required,Validators.pattern("^[0-9]+"), Validators.minLength(6),Validators.maxLength(8)]),
-      obraSocial: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      obraSocial: new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z]+$/)]),
       email: new FormControl('', [Validators.email, Validators.required]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('', [Validators.required]),
-      especialidad: new FormControl('', ),
-      otraEspecialidad: new FormControl('', [Validators.minLength(4), Validators.maxLength(25)]),
-      imagenPerfil: new FormControl(null,),
-      imagenPerfil1: new FormControl(null, ),
-      imagenPerfil2: new FormControl(null, ),
+      especialidad: new FormControl('', [Validators.required] ),
+      otraEspecialidad: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(25), Validators.pattern(/^[a-zA-Z]+$/)]),
+      imagenPerfil: new FormControl('', [Validators.required,]),
+      imagenPerfil1: new FormControl('', [Validators.required]),
+      imagenPerfil2: new FormControl('', [Validators.required,]),
+    }); 
+
+    const selectedRoleControl = this.formReg.get('selectedRole');
+
+    if (selectedRoleControl) {
+      selectedRoleControl.valueChanges.pipe(
+        map((selectedRole) => {
+
+          this.updateValidators(selectedRole);
+        })
+      ).subscribe();
+    }
+
+    this.loadCaptchaImage();
+
+    this.aFormGroup = this.formBuilder.group({
+      recaptcha: ['', Validators.required]
     });
     
-    // this.formReg.setValidators(this.missingImages);
-
+    // console.log('nombre:', this.formReg.get('nombre'));
+    // console.log('apellido:', this.formReg.get('apellido'));
     // console.log('edad:', this.formReg.get('edad'));
     // console.log('dni:', this.formReg.get('dni'));
     // console.log('obraSocial:', this.formReg.get('obraSocial'));
@@ -57,17 +88,122 @@ export class RegisterComponent implements OnInit{
     // console.log('confirmPassword:', this.formReg.get('confirmPassword'));
     // console.log('especialidad:', this.formReg.get('especialidad'));
     // console.log('otraEspecialidad:', this.formReg.get('otraEspecialidad'));
-    // console.log('imagenPerfil:', this.formReg.get('imagenPerfil'));
-    // console.log('imagenPerfil1:', this.formReg.get('imagenPerfil1'));
+    //  console.log('imagenPerfil:', this.formReg.get('imagenPerfil'));
+    //  console.log('imagenPerfil1:', this.formReg.get('imagenPerfil1'));
     // console.log('imagenPerfil2:', this.formReg.get('imagenPerfil2'));
 
   }    
 
   ngOnInit() : void{
-    
+
+    const selectedRoleControl = this.formReg.get('selectedRole');
+
+    if (selectedRoleControl) {
+      selectedRoleControl.valueChanges.pipe(
+        map((selectedRole) => {
+
+          this.updateValidators(selectedRole);
+        })
+      ).subscribe();
+    }
+  
+    this.loadCaptchaImage();
+
+    this.aFormGroup = this.formBuilder.group({
+      recaptcha: ['', Validators.required]
+    });
+
+    this.sitekey = "6LcxAQwpAAAAAKm8-ZSRy42mich3t-WNgNhSASgr"; // QA
+    //this.sitekey = "6LfICxIpAAAAAIrr9b-Ky36S61Q_yz763LCA5x3G"; // PROD
+
     setTimeout(() => {
     this.showLoading = false;
-  }, 2000);}
+  }, 2000);
+
+}
+
+selectRole(role: string) {
+  this.selectedRole = role;
+  this.formReg.get('selectedRole')?.setValue(role);
+}
+
+onFileChange(event: Event): void {
+  const inputElement = event.target as HTMLInputElement;
+  const file = inputElement.files?.[0];
+
+  if (file) {
+    this.readImage(file);
+  }
+}
+
+readImage(file: File): void {
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    const dataURL = e.target?.result as string;
+    console.log('Imagen cargada:', dataURL);
+
+    this.formReg.get('imagenPerfil1')?.setValue(dataURL);
+  };
+
+  reader.readAsDataURL(file);
+}
+
+loadCaptchaImage(): void {
+  this.captchaService.generateCaptcha()
+    .subscribe(response => {
+      this.captchaImage = `data:image/svg+xml;base64,${response.captchaData}`;
+
+      this.correctAnswer = response.captchaText;
+    });
+}
+
+
+updateValidators(selectedRole: string | null): void {
+  
+  if (selectedRole === null) {
+    return;
+  }
+
+  this.formReg.get('obraSocial')?.clearValidators();
+  this.formReg.get('especialidad')?.clearValidators();
+  this.formReg.get('otraEspecialidad')?.clearValidators();
+  this.formReg.get('imagenPerfil')?.clearValidators();
+  this.formReg.get('imagenPerfil1')?.clearValidators();
+  this.formReg.get('imagenPerfil2')?.clearValidators();
+
+  if (selectedRole === 'especialista') {
+    this.formReg.get('especialidad')?.setValidators([Validators.required]);
+
+    if (this.formReg.get('especialidad')?.value === 'otra') {
+      this.formReg.get('otraEspecialidad')?.setValidators([Validators.required]);
+    }
+    
+    this.formReg.get('imagenPerfil')?.setValidators([Validators.required]);
+    this.formReg.get('obraSocial')?.setValidators([Validators.required]);
+
+    this.formReg.get('obraSocial')?.clearValidators();
+    this.formReg.get('imagenPerfil1')?.clearValidators();
+    this.formReg.get('imagenPerfil2')?.clearValidators();
+  } 
+  else if (selectedRole === 'paciente') {
+
+    this.formReg.get('especialidad')?.clearValidators();
+    this.formReg.get('otraEspecialidad')?.clearValidators();
+
+
+    this.formReg.get('imagenPerfil1')?.setValidators([Validators.required]);
+    this.formReg.get('imagenPerfil2')?.setValidators([Validators.required]);
+
+    this.formReg.get('imagenPerfil')?.clearValidators();
+  }
+  this.formReg.get('obraSocial')?.updateValueAndValidity();
+  this.formReg.get('especialidad')?.updateValueAndValidity();
+  this.formReg.get('otraEspecialidad')?.updateValueAndValidity();
+  this.formReg.get('imagenPerfil')?.updateValueAndValidity();
+  this.formReg.get('imagenPerfil1')?.updateValueAndValidity();
+  this.formReg.get('imagenPerfil2')?.updateValueAndValidity();
+}
 
     togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
@@ -89,48 +225,49 @@ export class RegisterComponent implements OnInit{
     }
   }
 
-  missingImages: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const imagenPerfil = control.get('imagenPerfil')?.value;
-    const imagenPerfil1 = control.get('imagenPerfil1')?.value;
-    const imagenPerfil2 = control.get('imagenPerfil2')?.value;
+  imageValidator(control: AbstractControl): Promise<string | null> {
+    const file = control.value as File;
   
-    // Verifica si los valores son instancias de File
-    if ((imagenPerfil && !(imagenPerfil instanceof File)) ||
-        (imagenPerfil1 && !(imagenPerfil1 instanceof File)) ||
-        (imagenPerfil2 && !(imagenPerfil2 instanceof File))) {
-      return { invalidImage: true };
-    }
+    return new Promise((resolve, reject) => {
+      if (file && file.name) {
+        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        const extension = file.name.split('.').pop()?.toLowerCase();
   
-    return null;
-  };
+        if (extension && allowedExtensions.indexOf(extension) === -1) {
+          reject({ 'invalidImage': true });
+        }
   
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataURL = reader.result as string;
+          resolve(dataURL);
+          console.log(dataURL);
+        };
+  
+        reader.onerror = () => {
+          reject({ 'invalidImage': true });
+        };
+  
+        reader.readAsDataURL(file);
 
-  validateImage(control: AbstractControl): ValidationErrors | null {
-    const image = control.value as File;
-  
-    if (!image) {
-      console.log('No se ha seleccionado ninguna imagen.');
-      return { missingImage: true };
-    }
-  
-    if (!(image instanceof File)) {
-      console.log('El valor del control no es una instancia de File.');
-      return { invalidImage: true };
-    }
-  
-    if (image.size > 1000000) { // Límite de tamaño en bytes (1 MB)
-      console.log('La imagen tiene un tamaño incorrecto. Debe ser de hasta 1 MB.');
-      return { invalidSize: true };
-    }
-  
-    console.log('La imagen se ha cargado correctamente.');
-    return null;
+        console.log(file);
+      } else {
+        resolve(null);
+      }
+    });
   }
-
-
+  
   async onSubmit() {
+
+    this.showCaptcha = true;
     
     if (this.formReg.invalid) {
+      this.showCaptcha = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Campos incompletos',
+        text: 'Por favor, completa todos los campos del formulario.',
+      });
       return;
     }
 
@@ -180,21 +317,91 @@ export class RegisterComponent implements OnInit{
         });
       } 
       else {
+
+        if (this.aFormGroup.get('recaptcha')?.invalid) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en el ReCaptcha',
+            text: 'Por favor, valida el ReCaptcha antes de continuar.',
+          });
+          return;
+        }
         
         console.log("paso 1");
         const userCredential = await this.userService.register(email, password);
         const user = userCredential.user;
         console.log("paso 2");
         const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
-        console.log("paso 3");
-        await setDoc(userDocRef, { mail: email, role: selectedRole }, { merge: true });
-        console.log("paso 4");
+        
+        let additionalUserData: any = {
+          mail: email,
+          role: selectedRole,
+          nombre: this.formReg.get('nombre')?.value,
+          apellido: this.formReg.get('apellido')?.value,
+          edad: this.formReg.get('edad')?.value,
+          dni: this.formReg.get('dni')?.value
+        };
+        
+        const storageBaseUrl = `https://firebasestorage.googleapis.com/v0/b/tp-clinica-online-ba492.appspot.com/o`;
+
+        let imageUrl1: string = "";
+       
+        if (selectedRole === 'paciente') {
+          
+          const file: File = this.formReg.get('imagenPerfil1')?.value;
+          console.log(file);
+
+          if (file) {
+
+          const imagePath1 = `profile_images/${user.uid}/image1.jpg`;
+          const imageUrl1 = `${storageBaseUrl}/${encodeURIComponent(imagePath1)}`;
+          
+          // await this.uploadImageAndGetURL(imageUrl1, this.formReg.get('imagenPerfil1')?.value as File);
+          try {
+       
+            const downloadURL = await this.uploadImageAndGetURL(imageUrl1, file);
+            console.log('Imagen subida, URL:', downloadURL);
+          } catch (error) {
+            console.error('Error al subir la imagen:', error);
+          }
+        }
+          
+          const imagePath2 = `profile_images/${user.uid}/image2.jpg`;
+          const imageUrl2 = `${storageBaseUrl}/${encodeURIComponent(imagePath2)}`;
+
+          await this.uploadImageAndGetURL(imageUrl2, this.formReg.get('imagenPerfil2')?.value as File);
+          
+          additionalUserData = {
+            ...additionalUserData,
+            obrasocial: this.formReg.get('obraSocial')?.value,
+            aprobadoPorAdmin: true,
+            imagenPerfil1: imageUrl1,
+            imagenPerfil2: imageUrl2,
+        };
+        await setDoc(userDocRef, additionalUserData, { merge: true });
+        
+        } else if (selectedRole === 'especialista') {
+          const imagePath = `profile_images/${user.uid}/image.jpg`;
+          const imageUrl = `${storageBaseUrl}/${encodeURIComponent(imagePath)}`;
+          await this.uploadImageAndGetURL(imageUrl, this.formReg.get('imagenPerfil')?.value as File);
+        
+          additionalUserData = {
+            ...additionalUserData,
+            especialidad: this.formReg.get('especialidad')?.value,
+            otraEspecialidad: this.formReg.get('otraEspecialidad')?.value,
+            aprobadoPorAdmin: false,
+            imagenPerfil: imageUrl,
+          };
+          await setDoc(userDocRef, additionalUserData, { merge: true });
+        }     
+        
+         console.log("paso 3, cargado");
     
         if (!user.emailVerified) {
           await this.sendEmailVerification(user);
     
           Swal.fire({
-            icon: 'error',
+            icon: 'warning',
             title: 'Faltan validar tus datos antes de iniciar sesión.',
             text: 'Debes verificar tu correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a tu dirección de correo.',
           }).then(() => {
@@ -217,11 +424,13 @@ export class RegisterComponent implements OnInit{
           });
         }
       }
-    } catch (error: any) {
+    } catch (error: any) 
+    {
+      
       if (error.message === 'Debes verificar tu correo electrónico antes de iniciar sesión.') {
 
         Swal.fire({
-          icon: 'error',
+          icon: 'warning',
           title: 'Faltan validar tus datos',
           text: error.message,
         });
@@ -262,9 +471,50 @@ export class RegisterComponent implements OnInit{
           }
         });
       }
+      return Promise.resolve();
     }
-    
+
 }
+
+async uploadImage(path: string, file: File): Promise<void> {
+  const storage = getStorage();
+  const storageRef = ref(storage, path);
+
+
+  const contentType = file.type;
+
+  const metadata = {
+    contentType: contentType,
+  };
+
+  try {
+
+    await uploadBytes(storageRef, file, metadata);
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+}
+
+
+async uploadImageAndGetURL(path: string, file: File): Promise<string> {
+  const storage = getStorage();
+  const storageRef = ref(storage, 'imagen');
+
+  try {
+    // Wait for the upload to complete
+    const snapshot = await uploadBytes(storageRef, file, { contentType: 'image/jpeg' });
+
+    // Get the download URL after the upload
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+}
+
+
 
   public onClick(event: any): void 
   {

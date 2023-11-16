@@ -1,5 +1,13 @@
 export const navbarData = [
 
+
+    {
+        routeLink: 'perfil',
+        icon: 'fas fa-user', 
+        label: 'Mi perfil'
+    },
+
+
     {
         routeLink: 'turnos',
         icon: 'fas fa-calendar-alt',

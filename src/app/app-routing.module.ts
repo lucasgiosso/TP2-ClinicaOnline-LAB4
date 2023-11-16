@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BienvenidaComponent } from './modules/general/bienvenida/bienvenida.component';
+import { RegisterComponent } from './modules/general/register/register.component';
 
 //import { LoggedGuard } from './guards/logged.guard';
 
@@ -8,7 +9,7 @@ import { BienvenidaComponent } from './modules/general/bienvenida/bienvenida.com
 const routes: Routes = [
 
  { path: '', component: BienvenidaComponent, },
-  
+ { path: 'register', component: RegisterComponent },
   {
     path: 'login',
     loadChildren: () => import('./modules/general/login/login.module')

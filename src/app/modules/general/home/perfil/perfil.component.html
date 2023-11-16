@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <style>
+        /* Agrega estilos según tu preferencia */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .perfil {
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <li class="user" *ngFor="let usuario of usuariosPendientes">
+        <div class="user-info">
+          <h3>{{ usuario.nombre }} {{ usuario.apellido }}</h3>
+          <p>Edad: {{ usuario.edad }}</p>
+          <p>DNI: {{ usuario.dni }}</p>
+          <p>Mail: {{ usuario.mail }}</p>
+          <p>Imagen:</p>
+          <img [src]="usuario.imagenPerfil" alt="Imagen de perfil">
+        </div>
+
+        <div class="user-actions">
+          <button class="enable-access" (click)="editarUsuario(usuario.id)" *ngIf="!usuario.aprobado">Editar Usuario</button>
+        </div>
+      </li>
+
+</body>
+<div class="center-button">
+    <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
+  </div>
+</html>

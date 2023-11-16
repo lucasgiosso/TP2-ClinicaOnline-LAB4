@@ -278,4 +278,19 @@ body {
     font-size: 14px; 
   }
 
+  h2{
+    text-align: center;
+  }
+
+  .users-column {
+    max-height: 400px; /* Puedes ajustar la altura máxima según tus necesidades */
+    overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: white; /* Puedes ajustar el color de fondo según tus preferencias */
+    z-index: 100; /* Ajusta el índice z para asegurarte de que esté por encima de otros elementos */
+  }
   

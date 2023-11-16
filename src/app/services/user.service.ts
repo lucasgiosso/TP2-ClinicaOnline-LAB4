@@ -3,7 +3,8 @@ import { UserCredential, sendEmailVerification } from '@angular/fire/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, fetchSignInMethodsForEmail } from '@angular/fire/auth';
 import { DataServices } from './data.service';
-import { Firestore, collection, getDoc, doc } from '@angular/fire/firestore';
+import { Firestore, collection, getDoc, doc, updateDoc, query, getDocs, QuerySnapshot, where } from '@angular/fire/firestore';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -30,21 +31,8 @@ export class UserService {
   async register(email: string, password: string) {
 
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-      //const user = userCredential.user;      
-  
+
       return userCredential;
-
-      // if (user && user.emailVerified) {
-      //   return userCredential;
-      // } 
-      // else {
-
-      //   await sendEmailVerification(user);
-  
-      //   await signOut(this.auth);
-  
-      //   throw new Error('Debes verificar tu correo electrónico antes de iniciar sesión.');
-      // }
   }
 
   checkIfUserExists(email: string) {
@@ -56,37 +44,77 @@ export class UserService {
       });
   }
 
-  login({ email, password }: any) 
-  {
-    return signInWithEmailAndPassword(this.auth, email, password)
-      .then((userCredential: UserCredential) => {
-        const user = userCredential.user;
+  // login({ email, password }: any) 
+  // {
+  //   return signInWithEmailAndPassword(this.auth, email, password)
+  //     .then((userCredential: UserCredential) => {
+  //       const user = userCredential.user;
 
-        const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
+  //       const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
 
-        getDoc(userDocRef)
-          .then((userDoc) => {
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              const userRole = userData['role'];
-              this.userRoleSubject.next(userRole);
-              localStorage.setItem('userRole', userRole);
-              this.dataService.guardarLogin(email, userRole);
-            } 
+  //       getDoc(userDocRef)
+  //         .then((userDoc) => {
+  //           if (userDoc.exists()) {
+  //             const userData = userDoc.data();
+  //             const userRole = userData['role'];
+  //             this.userRoleSubject.next(userRole);
+  //             localStorage.setItem('userRole', userRole);
+  //             this.dataService.guardarLogin(email, userRole);
+  //           } 
         
-            else {
+  //           else {
 
-              console.error('Documento de usuario no encontrado en Firestore');
+  //             console.error('Documento de usuario no encontrado en Firestore');
+  //           }
+  //         })
+  //         .catch((error) => {
+
+  //           console.error('Error al consultar Firestore:', error);
+  //         });
+  
+  //       return userCredential;
+  //     });
+  // }
+
+
+  login({ email, password }: any) {
+    return signInWithEmailAndPassword(this.auth, email, password)
+      .then(async (userCredential: UserCredential) => {
+        const user = userCredential.user;
+  
+        const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
+  
+        try {
+          const userDoc = await getDoc(userDocRef);
+  
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const userRole = userData['role'];
+  
+            const aprobadoPorAdmin = userData['aprobadoPorAdmin'];
+  
+            if (!aprobadoPorAdmin) {
+
+              throw new Error('La cuenta aún no ha sido aprobada por el administrador.');
             }
-          })
-          .catch((error) => {
+  
+            this.userRoleSubject.next(userRole);
+            localStorage.setItem('userRole', userRole);
+            this.dataService.guardarLogin(email, userRole);
+          } else {
+            console.error('Documento de usuario no encontrado en Firestore');
+          }
+        } catch (error) {
 
-            console.error('Error al consultar Firestore:', error);
-          });
+          //console.error('Error al consultar Firestore:', error);
+          throw error;
+        }
   
         return userCredential;
       });
   }
+  
+  
   getRole(): string {
     return this.userData.userRole;
   }
@@ -107,4 +135,60 @@ export class UserService {
     });
   }
 
+  async aprobarUsuario(userId: string): Promise<void> {
+    const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), userId);
+    
+    try {
+      await updateDoc(userDocRef, {
+        aprobadoPorAdmin: true
+      });
+  
+      //console.log('Usuario aprobado exitosamente.');
+    } catch (error) {
+      console.error('Error al aprobar usuario:', error);
+      throw error;
+    }
+  }
+
+  async inhabilitarUsuario(userId: string): Promise<void> {
+    const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), userId);
+    
+    try {
+      await updateDoc(userDocRef, {
+        aprobadoPorAdmin: false
+      });
+  
+      //console.log('Usuario aprobado exitosamente.');
+    } catch (error) {
+      console.error('Error al aprobar usuario:', error);
+      throw error;
+    }
+  }
+
+  async obtenerUsuariosPendientesAprobacion(): Promise<any[]> {
+    try {
+      const usuariosQuery = query(
+        collection(this.firestore, 'DatosUsuarios'),
+        where('aprobadoPorAdmin', '==', false)
+      );
+
+      const querySnapshot: QuerySnapshot<any> = await getDocs(usuariosQuery);
+
+      const usuarios: any[] = [];
+      querySnapshot.forEach((doc) => {
+
+        const usuario = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        usuarios.push(usuario);
+      });
+
+      return usuarios;
+    } catch (error) {
+      console.error('Error al obtener usuarios pendientes de aprobación:', error);
+      throw error;
+    }
+  }
 }
+

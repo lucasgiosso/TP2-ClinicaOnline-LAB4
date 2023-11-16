@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
 import { User, UserCredential } from 'firebase/auth';
+import { ImagesService } from 'src/app/services/images.service';
 
 @Component({
     selector: 'app-login',
@@ -16,20 +17,29 @@ import { User, UserCredential } from 'firebase/auth';
     errorMensaje: string = '';
     currentUser: User | null = null;
 
-    defaultEmailAdmin = 'admin@clinica-online.com';
+    defaultEmailAdmin = 'lucasdiazgiosso@gmail.com';
     defaultPasswordAdmin = '123456';
 
-    defaultEmailEspecialista = 'especialista@clinica-online.com';
-    defaultPasswordEspecialista = '123456';
+    defaultEmailEspecialista1 = 'k1ppp03v@cj.MintEmail.com';
+    defaultPasswordEspecialista1 = '123456';
 
-    defaultEmailPaciente = 'lucasdiazgiosso@gmail.com';
-    defaultPasswordPaciente = '123456';
+    defaultEmailEspecialista2 = '';
+    defaultPasswordEspecialista2 = '123456';
+
+    defaultEmailPaciente1 = '8fjk8huv@cj.MintEmail.com';
+    defaultPasswordPaciente1 = '123456';
+
+    defaultEmailPaciente2 = '';
+    defaultPasswordPaciente2 = '123456';
+
+    defaultEmailPaciente3 = '';
+    defaultPasswordPaciente3 = '123456';
 
     email: string = '';
     password: string = '';
     showLoading: boolean = true;
 
-    constructor(private router: Router, private fb: FormBuilder,private userService: UserService )
+    constructor(private router: Router, private fb: FormBuilder,private userService: UserService, private imagesService: ImagesService )
     {
       this.formLogin = this.fb.group(
         { email: ['', [Validators.required, Validators.email]],
@@ -50,12 +60,10 @@ import { User, UserCredential } from 'firebase/auth';
       }
 
       onSubmit() {
-
         this.userService.login(this.formLogin.value)
           .then((userCredential: UserCredential) => {
             const user = userCredential.user;
             if (user.emailVerified) {
-
               console.log('Inicio de sesión exitoso');
               Swal.fire({
                 icon: 'success',
@@ -66,44 +74,70 @@ import { User, UserCredential } from 'firebase/auth';
                 this.router.navigate(['/home']);
               });
             } else {
-
               Swal.fire({
                 icon: 'error',
                 title: 'Error en el inicio de sesión',
                 text: 'Debes verificar tu correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a tu dirección de correo.',
               });
-
             }
           })
           .catch((error: any) => {
-            console.error(error);
             let errorMessage = 'Error al iniciar sesión. Por favor, verifica tu correo electrónico y contraseña.';
             if (error.code === 'auth/user-not-found') {
               errorMessage = 'El correo electrónico no existe. Por favor, verifica.';
             } else if (error.code === 'auth/wrong-password') {
               errorMessage = 'La contraseña es incorrecta. Por favor, verifica.';
+            } else if (error.message === 'La cuenta aún no ha sido aprobada por el administrador.') {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error de inicio de sesión',
+                text: 'La cuenta aún no ha sido aprobada por el administrador.',
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessage,
+              });
             }
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: errorMessage,
-            });
           });
       }
-
       
       
     loginLoadAdmin(): void{
       this.formLogin.setValue({email: this.defaultEmailAdmin, password: this.defaultPasswordAdmin});
     }
 
-    loginLoadEspecialista(): void{
-      this.formLogin.setValue({email: this.defaultEmailEspecialista, password: this.defaultPasswordEspecialista});
+    loginLoadEspecialista1(): void{
+      this.formLogin.setValue({email: this.defaultEmailEspecialista1, password: this.defaultPasswordEspecialista1});
     }
 
-    loginLoadPaciente(): void{
-      this.formLogin.setValue({email: this.defaultEmailPaciente, password: this.defaultPasswordPaciente});
+    loginLoadEspecialista2(): void{
+      this.formLogin.setValue({email: this.defaultEmailEspecialista2, password: this.defaultPasswordEspecialista2});
     }
+
+    loginLoadPaciente1(): void{
+      this.formLogin.setValue({email: this.defaultEmailPaciente1, password: this.defaultPasswordPaciente1});
+    }
+
+    loginLoadPaciente2(): void{
+      this.formLogin.setValue({email: this.defaultEmailPaciente2, password: this.defaultPasswordPaciente2});
+    }
+
+    loginLoadPaciente3(): void{
+      this.formLogin.setValue({email: this.defaultEmailPaciente3, password: this.defaultPasswordPaciente3});
+    }
+    
+    loginLoad(usuario: string): void {
+      // Lógica de inicio de sesión aquí...
+  
+      // Obtén la imagen del usuario
+      const imagenUsuario = this.imagesService.getImagenUsuario(usuario);
+  
+      // Usa la imagen como necesites, por ejemplo, mostrándola en una etiqueta de imagen
+      console.log(`Imagen del usuario ${usuario}: ${imagenUsuario}`);
+    }
+    
 
     onRegister() {
       this.router.navigate(['/register'])

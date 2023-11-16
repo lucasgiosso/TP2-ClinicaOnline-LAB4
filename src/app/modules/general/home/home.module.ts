@@ -6,18 +6,19 @@ import { HomeComponent } from './home.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 
+
 @NgModule({
   imports: [
     CommonModule,
     HomeRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
 
   ],
+
   declarations: [
     HomeComponent,
-    
   ]
 })
 export class HomeModule { }

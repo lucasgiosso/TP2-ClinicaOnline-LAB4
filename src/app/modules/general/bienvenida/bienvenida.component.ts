@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,12 +6,16 @@ import { Router } from '@angular/router';
   templateUrl: './bienvenida.component.html',
   styleUrls: ['./bienvenida.component.scss']
 })
-export class BienvenidaComponent {
+export class BienvenidaComponent implements OnInit{
 
   btnIniciar = 'Iniciar sesión';
   btnRegistrar = 'Registrarse';
 
   constructor(private router: Router) { }
+
+  ngOnInit() : void{
+    
+}
 
   public onClick(event: any): void 
   {

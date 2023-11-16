@@ -5,20 +5,18 @@
 
 </head>
 <body>
-  <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
-
-  <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
+    <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
   <div class="navbar-custom">
     <a class="user-color" (click)="toggleDropdown()" *ngIf="currentUser$ | async as user" >
       <img *ngIf="user.photoURL" src="{{user.photoURL}}" alt="Foto de perfil de usuario" class="user-photo">
       <img *ngIf="!user.photoURL" src="https://firebasestorage.googleapis.com/v0/b/tp-sala-de-juegos-diazgiossol.appspot.com/o/guest.webp?alt=media&token=69e91e4a-832d-4439-ab69-a30e2c8d80ee"  class="user-photo">
       {{ user.displayName?user.displayName : user.email }} 
     </a>
-    <!-- <div class="dropdown-content" *ngIf="isDropdownOpen">
+    <div class="dropdown-content" *ngIf="isDropdownOpen">
       <button class="logout-button" *ngIf="showLogoutButton" (click)="logout()">
         <i class="fa solid fa-power-off"></i> Cerrar Sesión
       </button>
-    </div> -->
+    </div>
   </div>
 
   <header>
@@ -32,14 +30,45 @@
 
   <main>
     
-    <h2></h2>
+    <div>
+      <h2>Mis Turnos</h2>
+    
+
+      <div>
+        <label for="especialidad">Filtrar por Especialidad:</label>
+        <input type="text" id="especialidad" [(ngModel)]="filtroEspecialidad" />
+    
+        <label for="especialista">Filtrar por Especialista:</label>
+        <input type="text" id="especialista" [(ngModel)]="filtroEspecialista" />
+      </div>
+    
+
+      <div *ngFor="let turno of turnos">
+        <p>{{ turno.especialidad }} - {{ turno.especialista }} - Estado: {{ turno.estado }}</p>
+    
+        <div *ngIf="turno.estado === 'Pendiente'">
+          <button (click)="cancelarTurno(turno, 'Motivo de cancelación')">Cancelar Turno</button>
+
+        </div>
+    
+        <div *ngIf="turno.estado === 'Realizado' && turno.resena">
+          <button (click)="verResena(turno)">Ver Reseña</button>
+          <button (click)="completarEncuesta(turno)">Completar Encuesta</button>
+        </div>
+    
+        <div *ngIf="turno.estado === 'Realizado' && turno.encuestaRealizada">
+          <button (click)="calificarAtencion(turno)">Calificar Atención</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- <h2></h2>
     <p>En breve va a poder sacar sus turnos online...</p>
         <img src="assets/turnos.png" alt="Logo" class="flipping-logo">
         <div class="center-button">
           <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
-        </div>
+        </div> -->
   </main>
-
 
   <footer class="site-footer">
     <div class="container">
@@ -47,6 +76,10 @@
     </div>
   </footer>
 
+  <div class="center-button">
+    <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
+  </div>
+  
 </body>
 </html>
 

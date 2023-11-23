@@ -5,7 +5,7 @@ import { Observable, map } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
+export class PacienteAdminGuard implements CanActivate {
   constructor(private userService: UserService, private router: Router) {}
 
   canActivate(
@@ -13,19 +13,18 @@ export class AdminGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean | UrlTree | Observable<boolean | UrlTree> {
     
-    // Utilizar el servicio para obtener el rol del usuario
     return this.userService.userRole$.pipe(
       map((userRole) => {
-        console.log('Valor de userRole (AdminGuard):', userRole);
+        console.log('Valor de userRole:', userRole);
 
-        if (userRole === 'admin') {
+        if (userRole === 'admin' || userRole === 'paciente' ) {
           return true; 
         } else {
 
           Swal.fire({
             icon: 'error',
             title: 'Acceso denegado',
-            text: 'Solo los usuarios con el rol de "admin" pueden acceder a esta página.',
+            text: 'Solo los usuarios con el rol de "admin" o "paciente" pueden acceder a esta página.',
           }).then(() => {
             this.router.navigateByUrl('/home'); 
           });

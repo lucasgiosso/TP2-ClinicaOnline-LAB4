@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { BienvenidaRoutingModule } from './bienvenida-routing.module';
 
-import { BienvenidaComponent } from './bienvenida.component';
-
-
 @NgModule({
   imports: [
     CommonModule,

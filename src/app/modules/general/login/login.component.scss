@@ -23,10 +23,10 @@ body {
   }
 
   .login-container img {
-    width: 150px; /* Ajusta el ancho según tus necesidades */
-    height: auto; /* El alto se ajusta automáticamente para mantener la proporción original */
+    width: 150px; 
+    height: auto; 
     margin: 10px 0;
-    margin-left: 20px; /* Espacio superior e inferior para separar el logo de otros elementos */
+    margin-left: 20px;
   }
   
 
@@ -131,7 +131,25 @@ body {
   }
 
   .AC-derecha {
-    padding: 10px;
+    position: fixed;
+    top: 50%;
+    left: calc(100% - 500px);
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
   }
+
+  .btnDerecha{
+    padding: 10px 15px; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .AC-derecha button {
+    width: 120px;
+}
 
   

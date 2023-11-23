@@ -2,7 +2,7 @@ import { Component,EventEmitter,HostListener,OnInit, Output } from '@angular/cor
 import { FormControl, FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { sendEmailVerification } from 'firebase/auth';
-import { Auth, User } from '@angular/fire/auth';
+import { Auth, User, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Firestore, collection, doc, setDoc } from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
@@ -29,6 +29,7 @@ export class SeccionUsuariosComponent implements OnInit{
   botonHabilitar: boolean = true;
   botonInhabilitar: boolean = true;
 
+
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
     collapsed = false;
     screenWidth = 0;
@@ -48,6 +49,7 @@ onResize(event: any){
   constructor ( private formBuilder : FormBuilder, private userService: UserService,private router: Router, private firestore: Firestore, private auth: Auth) {
 
     this.currentUser$ = this.userService.getCurrentUser();
+
 
     this.formReg = new FormGroup({
       selectedRole: new FormControl('', [Validators.required]),
@@ -197,6 +199,8 @@ onResize(event: any){
 
   async onSubmit() {
 
+    const currentUser = this.auth.currentUser;
+    const isAuthenticated = currentUser !== null && currentUser.emailVerified;
     // this.showCaptcha = true;
     
     // if (this.formReg.invalid) {
@@ -357,12 +361,13 @@ onResize(event: any){
             text: 'Debes avisarle al usuario para que valide su correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a su dirección de correo.',
           }).then(() => {
             
+
             if (passwordControl && confirmPasswordControl) {
               passwordControl.reset();
               confirmPasswordControl.reset();
-              selectedRole.reset();
-              additionalUserData.reset({ nombre: '', apellido: '', /* ...otros campos... */ });
-              this.router.navigate(['/home/config']);
+              //selectedRole.reset();
+              //additionalUserData.reset({ nombre: '', apellido: '', /* ...otros campos... */ });
+              //this.router.navigate(['/home/config']);
             }
           });
         } else {
@@ -373,6 +378,9 @@ onResize(event: any){
             text: '¡Bienvenido!',
             confirmButtonText: 'OK'
           }).then(() => {
+
+
+
             this.router.navigate(['/login']);
           });
         }

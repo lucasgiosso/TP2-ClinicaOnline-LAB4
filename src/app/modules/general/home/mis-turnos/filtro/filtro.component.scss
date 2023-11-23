@@ -1,0 +1,29 @@
+.input-container {
+    position: relative;
+  }
+  
+  .suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 100%;  /* Ajusta el ancho para que coincida con el input */
+    box-sizing: border-box;  /* Incluye el borde y el relleno en el ancho total */
+  }
+  
+  .suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .suggestions li {
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .suggestions li:hover {
+    background-color: #f0f0f0;
+  }

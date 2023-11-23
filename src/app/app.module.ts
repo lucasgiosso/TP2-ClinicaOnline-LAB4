@@ -18,6 +18,11 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AdminGuard } from './guards/admin.guard';
+import { PacienteGuard } from './guards/paciente.guard';
+import { PacienteAdminGuard } from 'src/app/guards/paciente-admin.guard';
+import { PacienteEspecialistaGuard } from 'src/app/guards/paciente-especialista.guard';
+
+
 
 
 @NgModule({
@@ -42,7 +47,7 @@ import { AdminGuard } from './guards/admin.guard';
     provideFirestore(() => getFirestore()),
     BrowserAnimationsModule,
   ],
-  providers: [DataServices, UserService,AdminGuard],
+  providers: [DataServices, UserService, AdminGuard, PacienteGuard, PacienteAdminGuard,PacienteEspecialistaGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

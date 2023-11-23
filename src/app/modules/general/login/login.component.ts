@@ -20,13 +20,13 @@ import { ImagesService } from 'src/app/services/images.service';
     defaultEmailAdmin = 'lucasdiazgiosso@gmail.com';
     defaultPasswordAdmin = '123456';
 
-    defaultEmailEspecialista1 = 'k1ppp03v@cj.MintEmail.com';
+    defaultEmailEspecialista1 = 'a275xk8w@cj.MintEmail.com';
     defaultPasswordEspecialista1 = '123456';
 
     defaultEmailEspecialista2 = '';
     defaultPasswordEspecialista2 = '123456';
 
-    defaultEmailPaciente1 = '8fjk8huv@cj.MintEmail.com';
+    defaultEmailPaciente1 = 'jms7e6g4@cj.MintEmail.com';
     defaultPasswordPaciente1 = '123456';
 
     defaultEmailPaciente2 = '';

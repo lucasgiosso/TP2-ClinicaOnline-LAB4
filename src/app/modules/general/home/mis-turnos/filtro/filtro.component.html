@@ -1,0 +1,50 @@
+<!-- <div>
+  <label for="especialidad">Especialidad:</label>
+  <div class="input-container">
+    <input type="text" [(ngModel)]="filtro.especialidad" (input)="autocompletarEspecialidad(filtro.especialidad)" />
+    <div *ngIf="sugerenciasEspecialidad.length > 0" class="suggestions">
+      <ul>
+        <li *ngFor="let sugerencia of sugerenciasEspecialidad" (click)="seleccionarEspecialidad(sugerencia)">
+          {{ sugerencia }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <label for="especialista">Especialista:</label>
+<input type="text" [(ngModel)]="filtro.especialista" (input)="autocompletarEspecialista(filtro.especialista)" />
+
+<div *ngIf="sugerenciasEspecialista.length > 0">
+  <ul>
+    <li *ngFor="let sugerencia of sugerenciasEspecialista" (click)="seleccionarEspecialista(sugerencia)">
+      {{ sugerencia }}
+    </li>
+  </ul>
+</div>
+</div> -->
+
+<div>
+  <label for="especialidad">Especialidad:</label>
+  <div class="input-container">
+    <input type="text" [(ngModel)]="filtro.especialidad" (input)="autocompletarEspecialidad(filtro.especialidad)" />
+    <div *ngIf="sugerenciasEspecialidad.length > 0" class="suggestions">
+      <ul>
+        <li *ngFor="let sugerencia of sugerenciasEspecialidad" (click)="seleccionarEspecialidad(sugerencia)">
+          {{ sugerencia }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <label for="especialista">Especialista:</label>
+  <div class="input-container">
+    <input type="text" [(ngModel)]="filtro.especialista" (input)="autocompletarEspecialista(filtro.especialista)" />
+    <div *ngIf="sugerenciasEspecialista.length > 0" class="suggestions">
+      <ul>
+        <li *ngFor="let sugerencia of sugerenciasEspecialista" (click)="seleccionarEspecialista(sugerencia)">
+          {{ sugerencia }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

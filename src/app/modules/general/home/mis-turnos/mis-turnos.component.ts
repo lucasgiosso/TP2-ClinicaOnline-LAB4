@@ -11,21 +11,6 @@ interface SideNavToggle {
   collapsed: boolean;
 }
 
-interface Turno {
-  id: string,
-  especialidad: string;
-  especialista: string;
-  estado: string;
-  resena?: string; 
-  encuestaRealizada?: boolean;
-}
-
-interface EncuestaRespuestas {
-  pregunta1: string;
-  pregunta2: number;
-  respuestas: string[];
-}
-
 @Component({
   selector: 'app-mis-turnos',
   templateUrl: './mis-turnos.component.html',
@@ -37,30 +22,45 @@ export class MisTurnosComponent implements OnInit{
   showLoading: boolean = true;
 
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
+
   collapsed = false;
   screenWidth = 0;
   currentUser$: Observable<User | null>;
   isDropdownOpen = false;
   showLogoutButton = false;
-  filtroEspecialidad: any;
-  filtroEspecialista: any;
-  turnos: Turno[] = [];  
-  motivo: string = "";
+  pacienteId = 1;
+  turnos: any[] = [];
+  turno: any;
+  turnosFiltrados: any[] = [];
+  especialidades: string[] = ['Cardiología', 'Dermatología', 'Oftalmología'];
+  especialistas: string[] = ['Dr. García', 'Dra. López', 'Dr. Martínez'];
+  fechaSeleccionada: Date = new Date();
+  horaInicio: string = '';
+  horaFin: string = '';
+  selectedYear: number;
+  selectedMonth: number;
+  selectedDay: number;
 
   constructor (private router: Router, private userService: UserService, private turnosService: TurnosService, private auth: Auth) {
     this.currentUser$ = this.userService.getCurrentUser();
+    this.selectedYear = 0; 
+    this.selectedMonth = 0;
+    this.selectedDay = 0;
   }
 
   ngOnInit() : void{
     
     setTimeout(() => {
     this.showLoading = false;
-  }, 2000);}
+  }, 2000);
+
+  //this.turnos = this.turnosService.getTurnosByPaciente(this.pacienteId);
+  this.turnosFiltrados = this.turnos;
+}
 
   public onClickHome(event: any): void 
   {
     this.router.navigate(['home']);
-
   }
 
   toggleDropdown() {
@@ -92,89 +92,68 @@ export class MisTurnosComponent implements OnInit{
     });
   }
 
-  cancelarTurno(turno: Turno, motivo: string) {
+  filtrarTurnos(filtro: any) {
     
-    if (!turno) {
-      console.error('No se proporcionó un turno válido.');
-      return;
-    }
-  
-    // Puedes mostrar un cuadro de diálogo de confirmación antes de cancelar el turno
-    const confirmacion = window.confirm('¿Estás seguro de que deseas cancelar este turno?');
-    if (!confirmacion) {
-      return;
-    }
-  
-    this.turnosService.cancelarTurno(parseInt(turno.id,10), 'Motivo de cancelación').subscribe(
-      () => {
-        console.log('Turno cancelado con éxito');
-        // Actualizar la lista de turnos después de la cancelación si es necesario
-        this.actualizarListaTurnos([turno]);
-      },
-      error => {
-        console.error('Error al cancelar el turno', error);
-      }
+    this.turnosFiltrados = this.turnos.filter(
+      (turno) =>
+        (!filtro.especialidad || turno.especialidad === filtro.especialidad) &&
+        (!filtro.especialista || turno.especialista === filtro.especialista)
     );
   }
 
-  actualizarListaTurnos(nuevosTurnos: Turno[]) {
+  solicitarTurno() {
 
-    this.turnos = nuevosTurnos;
+    const especialidad = 'Cardiología'; 
+    const especialista = 'Dr. García'; 
+
+    const nuevoTurno = this.turnosService.solicitarTurno(this.pacienteId, especialidad, especialista, this.selectedYear, this.selectedMonth,this.selectedDay, this.horaInicio , this.horaFin);
+    console.log('Nuevo turno solicitado:', nuevoTurno);
+
   }
 
+  cancelarTurno(turno: any) {
+    const motivo = prompt('Ingrese el motivo de la cancelación:');
+    
+    if (motivo !== null && motivo !== '') {
+      this.turnosService.cancelarTurno(turno.id, motivo);
+    }
+  }
 
-  verResena(turno: Turno) {
+  verResena(turno: any) {
+    const reseña = this.turnosService.obtenerResena(turno.id);
 
-    if (turno && turno.resena) {
-
-      console.log('Reseña del turno:', turno.resena);
+    if (reseña) {
+      alert(`Reseña del turno:\n${reseña}`);
     } else {
-      console.warn('El turno no tiene una reseña.');
+      alert('El turno no tiene una reseña disponible.');
     }
   }
 
-  completarEncuesta(turno: Turno) {
-    // Aquí puedes abrir un formulario o modal para que el usuario complete la encuesta
-    // Por ejemplo, podrías utilizar Angular Forms o alguna biblioteca de UI como Angular Material
-  
-    // Después de que el usuario haya completado la encuesta, podrías obtener las respuestas y enviarlas al servidor
-    const respuestas: EncuestaRespuestas = {
-      pregunta1: 'Respuesta1', // Sustituye con la respuesta real
-      pregunta2: 5,            // Sustituye con la respuesta real
-      respuestas: ['RespuestaA', 'RespuestaB'],
-      // Agrega más respuestas según sea necesario
-    };
-  
-    // Ahora, podrías enviar las respuestas al servidor a través de tu servicio
-    this.turnosService.enviarEncuesta(turno.id, respuestas).subscribe(
-      () => {
-        console.log('Encuesta completada con éxito');
-        // Puedes realizar alguna acción adicional si es necesario
-      },
-      error => {
-        console.error('Error al completar la encuesta', error);
-      }
-    );
+  completarEncuesta(turno: any) {
+    const encuesta = prompt('Ingrese su encuesta:');
+    
+    if (encuesta !== null && encuesta !== '') {
+      this.turnosService.completarEncuesta(turno.id, encuesta);
+      alert('Encuesta completada exitosamente.');
+    }
   }
 
-  calificarAtencion(turno: Turno) {
-    // Aquí puedes abrir un formulario o modal para que el usuario deje una calificación y comentario
-    // Por ejemplo, podrías utilizar Angular Forms o alguna biblioteca de UI como Angular Material
-    
-    // Después de que el usuario haya dejado la calificación y comentario, puedes enviarlos al servidor
-    const calificacion: number = 5; // Sustituye con la calificación real
-    const comentario: string = 'Excelente atención'; // Sustituye con el comentario real
-  
-    // Ahora, puedes enviar la calificación y comentario al servidor a través de tu servicio
-    this.turnosService.enviarCalificacion(turno.id, calificacion, comentario).subscribe(
-      () => {
-        console.log('Calificación completada con éxito');
-        // Puedes realizar alguna acción adicional si es necesario
-      },
-      error => {
-        console.error('Error al completar la calificación', error);
+  calificarAtencion(turno: any) {
+    const calificacionInput = prompt('Ingrese la calificación (de 1 a 5):');
+    const calificacion = calificacionInput !== null ? parseFloat(calificacionInput) : NaN;
+
+    if (!isNaN(calificacion) && calificacion >= 1 && calificacion <= 5) {
+      const comentario = prompt('Ingrese un comentario de la atención:');
+
+      if (comentario !== null) {
+        this.turnosService.calificarAtencion(turno.id, calificacion, comentario);
+        alert('Calificación realizada exitosamente.');
+      } else {
+        alert('Ingrese un comentario válido.');
       }
-    );
+    } else {
+      alert('Ingrese una calificación válida.');
+    }
   }
 
   userLogged() {

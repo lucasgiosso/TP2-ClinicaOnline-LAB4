@@ -1,17 +1,27 @@
 export const navbarData = [
 
-
     {
         routeLink: 'perfil',
         icon: 'fas fa-user', 
         label: 'Mi perfil'
     },
 
+    {
+        routeLink: 'turnos',
+        icon: 'fas fa-calendar-week',
+        label: 'Mis Turnos'
+    },
 
     {
         routeLink: 'turnos',
         icon: 'fas fa-calendar-alt',
-        label: 'Mis Turnos'
+        label: 'Turnos'
+    },
+
+    {
+        routeLink: 'solicitar',
+        icon: 'fas fa-calendar-plus',
+        label: 'Solicitar turno',
     },
 
     {
@@ -20,9 +30,4 @@ export const navbarData = [
         label: 'Usuarios'
     },
 
-    // {
-    //     routeLink: 'logout',
-    //     icon: 'fa solid fa-power-off',
-    //     label: 'Cerrar sesión'
-    // }
 ]

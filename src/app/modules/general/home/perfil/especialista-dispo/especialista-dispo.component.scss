@@ -1,0 +1,37 @@
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px; 
+  }
+
+  .horarios-container {
+    max-height: 300px;
+    overflow-y: auto; 
+  }
+
+  button[type="submit"] {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 20px auto;
+    display: block;
+
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #7f196e;
+  }
+
+  button[type="submit"].incomplete {
+    background-color: #ccc; 
+    cursor: not-allowed;
+  }

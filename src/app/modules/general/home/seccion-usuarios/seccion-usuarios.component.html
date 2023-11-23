@@ -6,7 +6,7 @@
 </head>
 <body>
   <app-loading *ngIf="showLoading" class="centered-loading"></app-loading>
-
+  
   <div class="navbar-custom">
     <a class="user-color" (click)="toggleDropdown()" class="user-photo" *ngIf="currentUser$ | async as user" >
       <img *ngIf="user.photoURL" src="{{user.photoURL}}" alt="Foto de perfil de usuario" class="user-photo">
@@ -19,13 +19,13 @@
       </button>
     </div>
   </div>
-
+  
   <header>
     <h1>Sección de Usuarios</h1>
   </header>
-
+  
   <nav>
-
+    
   </nav>
   <div class="container">
     <div class="users-column">

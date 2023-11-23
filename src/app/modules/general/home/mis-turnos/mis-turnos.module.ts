@@ -5,6 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MisTurnosRoutingModule } from './mis-turnos-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MisTurnosComponent } from './mis-turnos.component';
+import { FiltroComponent } from './filtro/filtro.component';
+import { SolicitarTurnoComponent } from '../solicitar-turno/solicitar-turno.component';
+
+
 
 @NgModule({
   imports: [
@@ -12,10 +16,16 @@ import { MisTurnosComponent } from './mis-turnos.component';
     MisTurnosRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+  
+    
   ],
   declarations: [
-    MisTurnosComponent
+    MisTurnosComponent,
+    FiltroComponent,
+    SolicitarTurnoComponent
+    
+
   ]
 })
 export class MisTurnosModule { }

@@ -174,7 +174,7 @@ img{
 .profile-images-container {
   display: flex;
   align-items: center;
-  max-width: 300px; /* Ajusta el ancho máximo según tus preferencias */
+  max-width: 300px; 
   margin: 0 auto;
 }
 
@@ -198,7 +198,7 @@ label[for="otraEspecialidad"] {
 
 .profile-buttons-container {
   display: flex;
-  gap: 10px;
+  gap: 20px;
 
   button {
     background: #4b9edd;
@@ -219,8 +219,8 @@ label[for="otraEspecialidad"] {
     }
 
     .profile-image {
-      width: 50px;
-      height: 50px;
+      width: 250px;
+      height: 250px;
       background-size: cover;
       background-position: center;
       border-radius: 50%;

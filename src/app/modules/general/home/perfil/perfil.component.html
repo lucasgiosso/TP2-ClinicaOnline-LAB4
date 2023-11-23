@@ -1,42 +1,50 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
-    <style>
-        /* Agrega estilos según tu preferencia */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .perfil {
-            border: 1px solid #ccc;
-            padding: 20px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-    </style>
-</head>
+
 <body>
+  
+<div class="user-profile" *ngIf="usuarioLogueado">
+  <div class="user-info">
+    <h2>{{ usuarioLogueado.nombre }} {{ usuarioLogueado.apellido }}</h2>
+    <p>Edad: {{ usuarioLogueado.edad }}</p>
+    <p>DNI: {{ usuarioLogueado.dni }}</p>
+    <p>Mail: {{ usuarioLogueado.mail }}</p>
 
-    <li class="user" *ngFor="let usuario of usuariosPendientes">
-        <div class="user-info">
-          <h3>{{ usuario.nombre }} {{ usuario.apellido }}</h3>
-          <p>Edad: {{ usuario.edad }}</p>
-          <p>DNI: {{ usuario.dni }}</p>
-          <p>Mail: {{ usuario.mail }}</p>
-          <p>Imagen:</p>
-          <img [src]="usuario.imagenPerfil" alt="Imagen de perfil">
-        </div>
 
-        <div class="user-actions">
-          <button class="enable-access" (click)="editarUsuario(usuario.id)" *ngIf="!usuario.aprobado">Editar Usuario</button>
-        </div>
-      </li>
+    <ng-container *ngIf="usuarioLogueado.role === 'admin'">
+    <p>Imagen de perfil:</p>
+    <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
+  </ng-container>
+    
+    <ng-container *ngIf="usuarioLogueado.role === 'paciente'">
 
-</body>
-<div class="center-button">
-    <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
+    <p>Obra Social: {{ usuarioLogueado.obrasocial }}</p>
+
+    <p>Imagen de perfil 1:</p>
+    <img [src]="usuarioLogueado.imagenPerfil1" alt="Imagen de perfil1">
+
+    <p>Imagen de perfil 2:</p>
+    <img [src]="usuarioLogueado.imagenPerfil2" alt="Imagen de perfil2">
+  </ng-container>
+    
+    <ng-container *ngIf="usuarioLogueado.role === 'especialista'">
+
+    <p>Especialidad: {{ usuarioLogueado.especialidad }}</p>
+
+    <p>Otra Especialidad: {{ usuarioLogueado.otraEspecialidad }}</p>
+
+    <p>Imagen de perfil:</p>
+    <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
+  </ng-container>
   </div>
-</html>
+
+    <div class="user-actions">
+      <ng-container *ngIf="usuarioLogueado.role === 'especialista'">
+        <app-especialista-dispo></app-especialista-dispo>
+      </ng-container>
+    </div>
+
+</div>
+</body>
+
+<div class="center-button">
+  <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)" />
+</div>

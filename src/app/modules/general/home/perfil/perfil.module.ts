@@ -5,6 +5,7 @@ import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { PerfilComponent } from './perfil.component';
 import { PerfilRoutingModule } from './perfil-routing.module';
 import { SharedModule } from '../../../../shared/shared.module';
+import { EspecialistaDispoComponent } from './especialista-dispo/especialista-dispo.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { SharedModule } from '../../../../shared/shared.module';
     
   ],
   declarations: [
-    PerfilComponent
+    PerfilComponent,
+    EspecialistaDispoComponent
 
   ]
 })

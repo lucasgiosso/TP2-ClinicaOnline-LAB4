@@ -5,10 +5,7 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-  }
-
-  main {
-    text-align: center;
+    font-family: "Poppins", sans-serif;
   }
   
   h2, p {
@@ -183,5 +180,33 @@ body {
     font-size: 14px; 
   }
 
+  main {
+    padding: 20px;
+    text-align: center;
+  }
   
+  .turnos-container {
+    margin-top: 20px;
+  }
   
+  .turno-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .turno-item span {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  button {
+    margin-left: 10px;
+  }
+  
+  .turno-item .fecha-turno {
+    display: block; /* Hacer que la fecha se muestre en una nueva línea */
+    margin-top: 10px; /* Agregar margen superior para separarla del contenido anterior */
+    font-size: 16px; /* Ajustar el tamaño de la fuente según sea necesario */
+  }

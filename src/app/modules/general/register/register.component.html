@@ -88,7 +88,7 @@
               </div>
 
               <label for="imagenPerfil1">Imagen de perfil 1</label>
-              <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1" accept="image/*" required>
+              <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1" accept="image/*" required (change)="onFileSelected($event)">
               <div class="errorMessage" *ngIf="formReg.get('imagenPerfil1')?.hasError('required')">
                 Debes cargar una imagen.
               </div>
@@ -100,7 +100,7 @@
               </div>
       
               <label for="imagenPerfil2">Imagen de perfil 2</label>
-              <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2" accept="image/*" required>
+              <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2" accept="image/*" required (change)="onFileSelected($event)">
               <div class="errorMessage" *ngIf="formReg.get('imagenPerfil2')?.hasError('required')">
                 Debes cargar una imagen.
               </div>
@@ -132,7 +132,7 @@
               </div>
 
               <label for="imagenPerfil">Imagen de perfil</label>
-              <input type="file" id="imagenPerfil" formControlName="imagenPerfil" accept="image/*" required>
+              <input type="file" id="imagenPerfil" formControlName="imagenPerfil" accept="image/*" required (change)="onFileSelected($event)">
               <div class="errorMessage" *ngIf="formReg.get('imagenPerfil')?.hasError('required')">
                 Debes cargar una imagen.
               </div>
@@ -150,8 +150,6 @@
           </div>
         </form>
         
-
-
         <div class="button-container">
           <input type="button" [value]="btnVolver" class="btn-primary" (click)="onClick($event)"/>
           <input type="button" [value]="btnVolverBien" class="btn-success" (click)="onClickWel($event)"/>

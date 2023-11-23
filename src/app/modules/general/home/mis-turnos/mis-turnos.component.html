@@ -29,45 +29,29 @@
   </nav>
 
   <main>
+    <h2>Mis Turnos</h2>
+  
     
-    <div>
-      <h2>Mis Turnos</h2>
-    
-
+    <div class="turnos-container">
       <div>
-        <label for="especialidad">Filtrar por Especialidad:</label>
-        <input type="text" id="especialidad" [(ngModel)]="filtroEspecialidad" />
-    
-        <label for="especialista">Filtrar por Especialista:</label>
-        <input type="text" id="especialista" [(ngModel)]="filtroEspecialista" />
-      </div>
-    
-
-      <div *ngFor="let turno of turnos">
-        <p>{{ turno.especialidad }} - {{ turno.especialista }} - Estado: {{ turno.estado }}</p>
-    
-        <div *ngIf="turno.estado === 'Pendiente'">
-          <button (click)="cancelarTurno(turno, 'Motivo de cancelación')">Cancelar Turno</button>
-
-        </div>
-    
-        <div *ngIf="turno.estado === 'Realizado' && turno.resena">
-          <button (click)="verResena(turno)">Ver Reseña</button>
-          <button (click)="completarEncuesta(turno)">Completar Encuesta</button>
-        </div>
-    
-        <div *ngIf="turno.estado === 'Realizado' && turno.encuestaRealizada">
-          <button (click)="calificarAtencion(turno)">Calificar Atención</button>
-        </div>
+        <app-filtro (filtroAplicado)="filtrarTurnos($event)"></app-filtro>
+        <ul>
+          <li *ngFor="let turno of turnos">
+            <div class="turno-item">
+              <span>{{ turno.especialidad }} - {{ turno.especialista }}</span>
+              <span class="fecha-turno">Fecha del turno: {{ turno.fecha }}</span> 
+              
+              <div class="button-container">
+                <button *ngIf="!turno.realizado" (click)="cancelarTurno(turno)">Cancelar Turno</button>
+                <button *ngIf="turno.comentario" (click)="verResena(turno)">Ver Reseña</button>
+                <button *ngIf="turno.realizado && turno.comentario" (click)="completarEncuesta(turno)">Completar Encuesta</button>
+                <button *ngIf="turno.realizado" (click)="calificarAtencion(turno)">Calificar Atención</button>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
-    
-    <!-- <h2></h2>
-    <p>En breve va a poder sacar sus turnos online...</p>
-        <img src="assets/turnos.png" alt="Logo" class="flipping-logo">
-        <div class="center-button">
-          <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)"/>
-        </div> -->
   </main>
 
   <footer class="site-footer">

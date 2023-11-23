@@ -1,0 +1,96 @@
+body {
+    background-color: #dddbdb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+  }
+
+
+.center-button {
+    position: fixed;
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px; 
+  }
+
+  button[type="submit"] {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 20px auto;
+    display: block;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #7f196e;
+  }
+
+  .btn-success {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+  }
+  
+  .btn-success:hover {
+    background-color: #7f196e;
+  }
+
+  .site-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .site-footer p {
+    margin: 0;
+    font-size: 14px; 
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px; /* Aumentado el espacio entre los títulos */
+    font-weight: bold;
+    font-size: 18px; /* Aumentado el tamaño de la letra de los títulos */
+    padding: 5px;
+  }
+  
+  select,
+  input[type="time"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    font-size: 18px; /* Aumentado el tamaño de la letra de los selectores */
+  }

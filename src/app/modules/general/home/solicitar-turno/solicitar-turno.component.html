@@ -1,0 +1,57 @@
+
+<body>
+  <form [formGroup]="solicitarTurnoForm" (ngSubmit)="guardarTurno()">
+  <div class="centered-content">
+      <label for="especialidad">Especialidad:</label>
+      <select id="especialidad" formControlName="especialidad" [(ngModel)]="especialidad">
+        <option *ngFor="let esp of especialidades" [value]="esp">{{ esp }}</option>
+      </select>
+    
+      <label for="especialista">Especialista:</label>
+      <select id="especialista" formControlName="especialista" [(ngModel)]="especialista">
+        <option *ngFor="let esp of especialistas" [value]="esp">{{ esp }}</option>
+      </select>
+    
+      <label for="fecha">Fecha del turno:</label>
+
+      <label for="day">Día:</label>
+      <select id="day" formControlName="day" [(ngModel)]="selectedDay" required>
+        <option *ngFor="let day of daysInMonth(selectedYear, selectedMonth)" [value]="day">{{ day }}</option>
+      </select>
+      <div class="error-message" *ngIf="formSubmitted && (!selectedDay || !selectedMonth || !selectedYear)">
+        Seleccione una fecha.
+      </div>
+
+      <label for="months">Mes:</label>
+      <select id="months" formControlName="months" [(ngModel)]="selectedMonth" required>
+        <option *ngFor="let month of monthsInYear(selectedYear)" [value]="month.value">{{ month.name }}</option>
+      </select>
+
+    <label for="years">Año:</label>
+    <select id="years" formControlName="years" [(ngModel)]="selectedYear" required>
+      <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+    </select>
+
+    <div *ngIf="formSubmitted && (!selectedDay || !selectedMonth || !selectedYear)">Seleccione una fecha.</div>
+
+    <label for="horaInicio">Hora de inicio:</label>
+    <input formControlName="horaInicio" [(ngModel)]="horaInicio" type="time" id="horaInicio" step="900" required>
+
+    <label for="horaFin">Hora de fin:</label>
+    <input formControlName="horaFin" [(ngModel)]="horaFin" type="time" id="horaFin"  step="900" required>
+    
+    <button type="submit">Solicitar Turno</button>
+  </div>
+</form>
+  
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2023 Clinica Online. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  
+  <div class="center-button">
+    <input type="button" [value]="btnVolver" class="btn-success" (click)="onClickHome($event)" />
+  </div>
+</body>
+  

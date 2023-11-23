@@ -1,0 +1,90 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #dddbdb;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: "Euclid Circular A", "Poppins";
+     
+}
+
+.user-info {
+    //border: 2px solid #a72892;
+    background-color: #fff;
+    padding: 30px;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+.user-info h2 {
+    color: #a72892;
+}
+
+.user-info p {
+    color: #333;
+}
+
+.user-info img {
+    max-width: 100%;
+    border-radius: 50%;
+    margin-top: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.user-actions button {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.user-actions button:hover {
+    background-color: #7f196e;
+}
+
+.btn-success {
+    background-color: #a72892;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-success:hover {
+    background-color: #7f196e;
+  }
+  .center-button {
+    position: fixed;
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}

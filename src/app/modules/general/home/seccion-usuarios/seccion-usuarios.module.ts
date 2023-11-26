@@ -5,6 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SeccionUsuariosComponent } from './seccion-usuarios.component';
 import { SeccionUsuariosRoutingModule } from './seccion-usuarios-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ListaUsuariosComponent } from './lista-usuarios/lista-usuarios.component';
+import { FilterPipe } from 'src/app/pipes/filter.pipe'
+
 
 @NgModule({
   imports: [
@@ -12,10 +15,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
     SeccionUsuariosRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+
   ],
   declarations: [
-    SeccionUsuariosComponent
+    SeccionUsuariosComponent,
+    ListaUsuariosComponent,
+    FilterPipe
   ]
 })
 export class SeccionUsuariosModule { }

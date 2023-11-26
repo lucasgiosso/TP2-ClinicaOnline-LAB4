@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User, fetchSignInMethodsForEmail } from '@angular/fire/auth';
 import { DataServices } from './data.service';
 import { Firestore, collection, getDoc, doc, updateDoc, query, getDocs, QuerySnapshot, where } from '@angular/fire/firestore';
-import Swal from 'sweetalert2';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -167,6 +167,35 @@ export class UserService {
         const usuario = {
           id: doc.id,
           ...doc.data(),
+        };
+        usuarios.push(usuario);
+      });
+  
+      return usuarios;
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+      throw error;
+    }
+  }
+
+  async obtenerUsuariosConFotoPerfil(email: string): Promise<any[]> {
+    try {
+      const usuariosQuery = query(collection(this.firestore, 'DatosUsuarios'), where('mail', '==', email));
+      const querySnapshot: QuerySnapshot<any> = await getDocs(usuariosQuery);
+  
+      const usuarios: any[] = [];
+      querySnapshot.forEach(async (doc) => {
+        
+        const campoImagenPerfil =
+        doc.data().role === 'admin' ? 'imagenPerfil' :
+        doc.data().role === 'paciente' ? 'imagenPerfil1' :
+        doc.data().role === 'especialista' ? 'imagenPerfil' :
+        'imagenPerfil';
+  
+        const usuario = {
+          id: doc.id,
+          ...doc.data(),
+          imagenPerfilUrl: doc.data()[campoImagenPerfil],
         };
         usuarios.push(usuario);
       });

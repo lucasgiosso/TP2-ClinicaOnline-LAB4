@@ -33,6 +33,9 @@ export class RegisterComponent implements OnInit{
   mostrarOtraEspecialidad: boolean = true;
   showLoading: boolean = true;
   showCaptcha: boolean = false;
+  imagenPerfil: File | null = null;
+  imagenPerfil1: File | null = null;
+  imagenPerfil2: File | null = null;
 
   
   sitekey: string = "";
@@ -102,8 +105,8 @@ export class RegisterComponent implements OnInit{
       recaptcha: ['', Validators.required]
     });
 
-    this.sitekey = "6LcxAQwpAAAAAKm8-ZSRy42mich3t-WNgNhSASgr"; // QA
-    //this.sitekey = "6LfICxIpAAAAAIrr9b-Ky36S61Q_yz763LCA5x3G"; // PROD
+    //this.sitekey = "6LcxAQwpAAAAAKm8-ZSRy42mich3t-WNgNhSASgr"; // QA
+    this.sitekey = "6LfICxIpAAAAAIrr9b-Ky36S61Q_yz763LCA5x3G"; // PROD
 
     setTimeout(() => {
     this.showLoading = false;
@@ -117,18 +120,16 @@ selectRole(role: string) {
 }
 
 onFileSelected(event: any) {
-  const file: File = event.target.files[0];
-  if (file) {
-    this.ImagesService.uploadFile(file)
-      .then(downloadUrl => {
-        console.log('Archivo subido correctamente. URL:', downloadUrl);
-
-      })
-      .catch(error => {
-        console.error('Error al subir el archivo:', error);
-      });
-  }
+  this.imagenPerfil = event.target.files[0];
 }
+
+onFileSelected1(event: any) {
+  this.imagenPerfil1 = event.target.files[0];
+}
+
+onFileSelected2(event: any) {
+  this.imagenPerfil2 = event.target.files[0];
+  }
 
 loadCaptchaImage(): void {
   this.captchaService.generateCaptcha()
@@ -236,209 +237,6 @@ updateValidators(selectedRole: string | null): void {
       }
     });
   }
-  
-//   async onSubmit() {
-
-//     this.showCaptcha = true;
-    
-//     if (this.formReg.invalid) {
-//       this.showCaptcha = false;
-//       Swal.fire({
-//         icon: 'error',
-//         title: 'Campos incompletos',
-//         text: 'Por favor, completa todos los campos del formulario.',
-//       });
-//       return;
-//     }
-
-//     const passwordControl = this.formReg.get('password');
-//     const confirmPasswordControl = this.formReg.get('confirmPassword');
-//     const selectedRole = this.formReg.get('selectedRole')?.value;
-//     const { email, password, confirmPassword } = this.formReg.value;
-  
-//     if (password !== confirmPassword) {
-//       Swal.fire({
-//         icon: 'error',
-//         title: 'Error en la contraseña',
-//         text: 'Las contraseñas no coinciden. Por favor, verifica.',
-//       }).then(() => {
-//         if (passwordControl && confirmPasswordControl) {
-//           passwordControl.reset();
-//           confirmPasswordControl.reset();
-//         }
-//       });
-//       return;
-//     }
-
-//     if (!selectedRole) {
-//       Swal.fire({
-//         icon: 'error',
-//         title: 'Perfil no seleccionado',
-//         text: 'Por favor, selecciona un perfil antes de registrarte.',
-//       });
-//       return;
-//     }
-   
-//     try {
-//       const userExists = await this.userService.checkIfUserExists(email);
-    
-//       if (userExists) {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Usuario existente',
-//           text: 'El correo electrónico ya está registrado. Inicia sesión en lugar de registrarte.',
-//         }).then(() => {
-//           if (passwordControl && confirmPasswordControl) {
-//             passwordControl.reset();
-//             confirmPasswordControl.reset();
-//             this.router.navigate(['/login']);
-//             return;
-//           }
-//         });
-//       } 
-//       else {
-
-//         if (this.aFormGroup.get('recaptcha')?.invalid) {
-//           Swal.fire({
-//             icon: 'error',
-//             title: 'Error en el ReCaptcha',
-//             text: 'Por favor, valida el ReCaptcha antes de continuar.',
-//           });
-//           return;
-//         }
-        
-//         console.log("paso 1");
-//         const userCredential = await this.userService.register(email, password);
-//         const user = userCredential.user;
-//         console.log("paso 2");
-//         const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
-        
-//         let additionalUserData: any = {
-//           mail: email,
-//           role: selectedRole,
-//           nombre: this.formReg.get('nombre')?.value,
-//           apellido: this.formReg.get('apellido')?.value,
-//           edad: this.formReg.get('edad')?.value,
-//           dni: this.formReg.get('dni')?.value
-//         };
-        
-//         const storageBaseUrl = `https://firebasestorage.googleapis.com/v0/b/tp-clinica-online-ba492.appspot.com/o`;
-//         let imageUrl1: string = "";
-
-//         if (selectedRole === 'paciente') {
-//           const file: File = this.formReg.get('imagenPerfil1')?.value;
-//           console.log(file);
-
-//           if (file) {
-
-//           const imagePath1 = `profile_images/${user.uid}/image1.jpg`;
-//           const imageUrl1 = `${storageBaseUrl}/${encodeURIComponent(imagePath1)}`;
-          
-//           // await this.uploadImageAndGetURL(imageUrl1, this.formReg.get('imagenPerfil1')?.value as File);
-//           try {
-       
-//             // const downloadURL = await this.uploadImageAndGetURL(imageUrl1, file);
-//             // console.log('Imagen subida, URL:', downloadURL);
-//           } catch (error) {
-//             console.error('Error al subir la imagen:', error);
-//           }
-//         }
-          
-//           const imagePath2 = `profile_images/${user.uid}/image2.jpg`;
-//           const imageUrl2 = `${storageBaseUrl}/${encodeURIComponent(imagePath2)}`;
-
-//           //await this.uploadImageAndGetURL(imageUrl2, this.formReg.get('imagenPerfil2')?.value as File);
-          
-//           additionalUserData = {
-//             ...additionalUserData,
-//             obrasocial: this.formReg.get('obraSocial')?.value,
-//             aprobadoPorAdmin: true,
-//             imagenPerfil1: imageUrl1,
-//             imagenPerfil2: imageUrl2,
-//         };
-//         await setDoc(userDocRef, additionalUserData, { merge: true });
-
-//         }     
-        
-//          console.log("paso 3, cargado");
-    
-//         if (!user.emailVerified) {
-//           await this.sendEmailVerification(user);
-    
-//           Swal.fire({
-//             icon: 'warning',
-//             title: 'Faltan validar tus datos antes de iniciar sesión.',
-//             text: 'Debes verificar tu correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a tu dirección de correo.',
-//           }).then(() => {
-            
-//             if (passwordControl && confirmPasswordControl) {
-//               passwordControl.reset();
-//               confirmPasswordControl.reset();
-//               this.router.navigate(['/login']);
-//             }
-//           });
-//         } else {
-    
-//           Swal.fire({
-//             icon: 'success',
-//             title: 'Registro exitoso',
-//             text: '¡Bienvenido!',
-//             confirmButtonText: 'OK'
-//           }).then(() => {
-//             this.router.navigate(['/login']);
-//           });
-//         }
-//       }
-//     } catch (error: any) 
-//     {
-      
-//       if (error.message === 'Debes verificar tu correo electrónico antes de iniciar sesión.') {
-
-//         Swal.fire({
-//           icon: 'warning',
-//           title: 'Faltan validar tus datos',
-//           text: error.message,
-//         });
-//         this.router.navigate(['/login']);
-//       } else if (error.code === 'auth/invalid-email') {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Error en el correo electrónico',
-//           text: 'El formato del correo electrónico es incorrecto. Por favor, verifica.',
-//         });
-//       } else if (error.code === 'auth/weak-password') {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Contraseña débil',
-//           text: 'La contraseña es demasiado débil. Debe contener al menos 6 caracteres.',
-//         }).then(() => {
-//           if (passwordControl && confirmPasswordControl) {
-//             passwordControl.reset();
-//             confirmPasswordControl.reset();
-//           }
-//         });
-//       } else if (error.code === 'auth/email-already-in-use') {
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Correo electrónico en uso',
-//           text: 'El correo electrónico ya está registrado. Inicia sesión en lugar de registrarte.',
-//         }); 
-//       } else {
-//         console.error('Error en el registro:', error);
-//         Swal.fire({
-//           icon: 'error',
-//           title: 'Error en el registro',
-//           text: 'Hubo un error al registrar tu cuenta. Por favor, verifica tus datos.',
-//         }).then(() => {
-//           if (passwordControl && confirmPasswordControl) {
-//             passwordControl.reset();
-//             confirmPasswordControl.reset();
-//           }
-//         });
-//       }
-//       return Promise.resolve();
-//     }
-// }
 
 async onSubmit() {
   this.showCaptcha = true;
@@ -522,62 +320,54 @@ async onSubmit() {
         dni: this.formReg.get('dni')?.value
       };
 
-      const storageBaseUrl = `https://firebasestorage.googleapis.com/v0/b/tp-clinica-online-ba492.appspot.com/o`;
-      
       if (selectedRole === 'paciente') {
-        
-        let imageUrl1: string = "";
-        let imageUrl2: string = ""; 
+      
+        console.log("entra?");
 
-        const file: File = this.formReg.get('imagenPerfil1')?.value;
-        console.log(file);
+        if (this.imagenPerfil1 && this.imagenPerfil2) 
+            {
+              console.log("entra1?");
+              const image1 = await this.ImagesService.uploadFile(this.imagenPerfil1);
+              const image2 = await this.ImagesService.uploadFile(this.imagenPerfil2);
 
-        if (file) {
+              console.log(image1);
 
-          try {
-            const downloadURL = await this.ImagesService.uploadFile(file);
-            console.log('Imagen subida, URLLLLLLL:', downloadURL);
-            imageUrl1 = downloadURL;
-          } catch (error) {
-            console.error('Error al subir la imagen:', error);
-          }
-        }
+              console.log(image2);
 
-        const file2: File = this.formReg.get('imagenPerfil2')?.value;
-        
-        if (file2) {
-          try {
-            const downloadURL2 = await this.ImagesService.uploadFile(file2);
-            console.log('Imagen 2 subida, URL:', downloadURL2);
-            imageUrl2 = downloadURL2;
-          } catch (error) {
-            console.error('Error al subir la imagen 2:', error);
-          }
-        }
+              additionalUserData = {
+                ...additionalUserData,
+                obrasocial: this.formReg.get('obraSocial')?.value,
+                aprobadoPorAdmin: true,
+                imagenPerfil1: image1,
+                imagenPerfil2: image2,
+              };
+              console.log("paso 3, cargado");
+              await setDoc(userDocRef, additionalUserData, { merge: true });
+            } 
 
-        additionalUserData = {
-          ...additionalUserData,
-          obrasocial: this.formReg.get('obraSocial')?.value,
-          aprobadoPorAdmin: true,
-          imagenPerfil1: imageUrl1,
-          imagenPerfil2: imageUrl2,
-        };
-        console.log("paso 3, cargado");
-  
-        await setDoc(userDocRef, additionalUserData, { merge: true });
+        // try 
+        // {
+            
+        // }
+        // catch (error) 
+        // {
+        //   console.error('Error al subir la imagen:', error);
+        // }
+
     }else if (selectedRole === 'especialista') 
     {
-        const imagePath = `profile_images/${user.uid}/image.jpg`;
-        const imageUrl = `${storageBaseUrl}/${encodeURIComponent(imagePath)}`;
-        //await this.uploadImageAndGetURL(imageUrl, this.formReg.get('imagenPerfil')?.value as File);
-      
+      if (this,this.imagenPerfil) {
+        
+        const image = await this.ImagesService.uploadFile(this.imagenPerfil);
+          
         additionalUserData = {
           ...additionalUserData,
           especialidad: this.formReg.get('especialidad')?.value,
           otraEspecialidad: this.formReg.get('otraEspecialidad')?.value,
           aprobadoPorAdmin: false,
-          imagenPerfil: imageUrl,
+          imagenPerfil: image,
         };
+      }
         console.log("paso 3, cargado");
         await setDoc(userDocRef, additionalUserData, { merge: true });
       }     

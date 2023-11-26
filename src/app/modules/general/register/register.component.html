@@ -88,7 +88,7 @@
               </div>
 
               <label for="imagenPerfil1">Imagen de perfil 1</label>
-              <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1" accept="image/*" required (change)="onFileSelected($event)">
+              <input type="file" id="imagenPerfil1" formControlName="imagenPerfil1" accept="image/*" required (change)="onFileSelected1($event)">
               <div class="errorMessage" *ngIf="formReg.get('imagenPerfil1')?.hasError('required')">
                 Debes cargar una imagen.
               </div>
@@ -100,7 +100,7 @@
               </div>
       
               <label for="imagenPerfil2">Imagen de perfil 2</label>
-              <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2" accept="image/*" required (change)="onFileSelected($event)">
+              <input type="file" id="imagenPerfil2" formControlName="imagenPerfil2" accept="image/*" required (change)="onFileSelected2($event)">
               <div class="errorMessage" *ngIf="formReg.get('imagenPerfil2')?.hasError('required')">
                 Debes cargar una imagen.
               </div>

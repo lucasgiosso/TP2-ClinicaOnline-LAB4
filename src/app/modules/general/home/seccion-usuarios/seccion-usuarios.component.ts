@@ -7,7 +7,7 @@ import { Firestore, collection, doc, setDoc } from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { ImagesService } from 'src/app/services/images.service'
 
 interface SideNavToggle {
   screenWidth: number;
@@ -28,6 +28,16 @@ export class SeccionUsuariosComponent implements OnInit{
   usuariosPendientes: any[] = [];
   botonHabilitar: boolean = true;
   botonInhabilitar: boolean = true;
+  imagenPerfil0: File | null = null;
+  imagenPerfil: File | null = null;
+  imagenPerfil1: File | null = null;
+  imagenPerfil2: File | null = null;
+  showCaptcha: boolean = false;
+  crearUsuarioVisible: boolean = false;
+  animacionCrearUsuario: boolean = false;
+  usuarios: any[] = [];
+  mostrarFormulario: boolean = false;
+
 
 
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
@@ -46,23 +56,24 @@ onResize(event: any){
   }
 }
 
-  constructor ( private formBuilder : FormBuilder, private userService: UserService,private router: Router, private firestore: Firestore, private auth: Auth) {
+  constructor ( private formBuilder : FormBuilder, private ImagesService: ImagesService,private userService: UserService,private router: Router, private firestore: Firestore, private auth: Auth) {
 
     this.currentUser$ = this.userService.getCurrentUser();
 
 
     this.formReg = new FormGroup({
       selectedRole: new FormControl('', [Validators.required]),
-      nombre: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20),Validators.pattern(/^[a-zA-Z]+$/)]),
-      apellido: new FormControl('', [Validators.required, Validators.minLength(3),Validators.pattern(/^[a-zA-Z]+$/)]),
+      nombre: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20),Validators.pattern(/^[a-zA-Z\s]+$/)]),
+      apellido: new FormControl('', [Validators.required, Validators.minLength(3),Validators.pattern(/^[a-zA-Z\s]+$/)]),
       edad: new FormControl('', [Validators.required, Validators.pattern("^[0-9]+"),Validators.min(18), Validators.max(99)]),
       dni: new FormControl('', [Validators.required,Validators.pattern("^[0-9]+"), Validators.minLength(6),Validators.maxLength(8)]),
-      obraSocial: new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z]+$/)]),
+      obraSocial: new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\s]+$/)]),
       email: new FormControl('', [Validators.email, Validators.required]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('', [Validators.required]),
       especialidad: new FormControl('', [Validators.required] ),
       otraEspecialidad: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(25), Validators.pattern(/^[a-zA-Z]+$/)]),
+      imagenPerfil0: new FormControl('', [Validators.required]),
       imagenPerfil: new FormControl('', [Validators.required]),
       imagenPerfil1: new FormControl('', [Validators.required]),
       imagenPerfil2: new FormControl('', [Validators.required]),
@@ -82,7 +93,7 @@ onResize(event: any){
   }
 
   ngOnInit() : void{
-    
+   
     setTimeout(() => {
     this.showLoading = false;
   }, 2000);
@@ -90,11 +101,32 @@ onResize(event: any){
   this.screenWidth = window.innerWidth;
   this.currentUser$ = this.userService.getCurrentUser();
   this.cargarUsuariosPendientes();
+
 }
 
   public onClickHome(event: any): void 
   {
     this.router.navigate(['home']);
+  }
+
+  toggleFormulario() {
+    this.mostrarFormulario = !this.mostrarFormulario;
+  }
+
+  toggleCrearUsuario() {
+    this.animacionCrearUsuario = !this.animacionCrearUsuario;
+  }
+
+  async obtenerUsuarios() {
+    try {
+      this.usuarios = await this.userService.obtenerUsuarios();
+    } catch (error) {
+      console.error('Error al obtener usuarios en el componente:', error);
+    }
+  }
+
+  onAnimationEnd() {
+    this.animacionCrearUsuario = false;
   }
 
   getValue(value: string): AbstractControl{
@@ -139,9 +171,33 @@ onResize(event: any){
   
       this.formReg.get('imagenPerfil')?.clearValidators();
     }
+
+    else if (selectedRole === 'admin') {
+  
+      if (this.formReg.get('especialidad')?.value === 'otra') {
+        this.formReg.get('otraEspecialidad')?.setValidators([Validators.required]);
+      }
+      
+      this.formReg.get('imagenPerfil')?.setValidators([Validators.required]);
+      this.formReg.get('obraSocial')?.setValidators([Validators.required]);
+  
+      this.formReg.get('obraSocial')?.clearValidators();
+      this.formReg.get('imagenPerfil1')?.clearValidators();
+      this.formReg.get('imagenPerfil2')?.clearValidators();
+
+      this.formReg.get('especialidad')?.clearValidators();
+      this.formReg.get('otraEspecialidad')?.clearValidators();
+  
+  
+      this.formReg.get('imagenPerfil1')?.setValidators([Validators.required]);
+      this.formReg.get('imagenPerfil2')?.setValidators([Validators.required]);
+  
+      this.formReg.get('imagenPerfil')?.clearValidators();
+    }
     this.formReg.get('obraSocial')?.updateValueAndValidity();
     this.formReg.get('especialidad')?.updateValueAndValidity();
     this.formReg.get('otraEspecialidad')?.updateValueAndValidity();
+    this.formReg.get('imagenPerfil0')?.updateValueAndValidity();
     this.formReg.get('imagenPerfil')?.updateValueAndValidity();
     this.formReg.get('imagenPerfil1')?.updateValueAndValidity();
     this.formReg.get('imagenPerfil2')?.updateValueAndValidity();
@@ -168,6 +224,22 @@ onResize(event: any){
       this.logout();
     }
   }
+
+  onFileSelected0(event: any) {
+    this.imagenPerfil0 = event.target.files[0];
+  }
+
+  onFileSelected(event: any) {
+    this.imagenPerfil = event.target.files[0];
+  }
+  
+  onFileSelected1(event: any) {
+    this.imagenPerfil1 = event.target.files[0];
+  }
+  
+  onFileSelected2(event: any) {
+    this.imagenPerfil2 = event.target.files[0];
+    }
 
   async logout() {
     Swal.fire({
@@ -198,21 +270,7 @@ onResize(event: any){
   }
 
   async onSubmit() {
-
-    const currentUser = this.auth.currentUser;
-    const isAuthenticated = currentUser !== null && currentUser.emailVerified;
-    // this.showCaptcha = true;
-    
-    // if (this.formReg.invalid) {
-    //   this.showCaptcha = false;
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: 'Campos incompletos',
-    //     text: 'Por favor, completa todos los campos del formulario.',
-    //   });
-    //   return;
-    // }
-
+  
     const passwordControl = this.formReg.get('password');
     const confirmPasswordControl = this.formReg.get('confirmPassword');
     const selectedRole = this.formReg.get('selectedRole')?.value;
@@ -231,7 +289,7 @@ onResize(event: any){
       });
       return;
     }
-
+  
     if (!selectedRole) {
       Swal.fire({
         icon: 'error',
@@ -240,10 +298,10 @@ onResize(event: any){
       });
       return;
     }
-   
+  
     try {
       const userExists = await this.userService.checkIfUserExists(email);
-    
+  
       if (userExists) {
         Swal.fire({
           icon: 'error',
@@ -257,24 +315,14 @@ onResize(event: any){
             return;
           }
         });
-      } 
-      else {
-
-        // if (this.aFormGroup.get('recaptcha')?.invalid) {
-        //   Swal.fire({
-        //     icon: 'error',
-        //     title: 'Error en el ReCaptcha',
-        //     text: 'Por favor, valida el ReCaptcha antes de continuar.',
-        //   });
-        //   return;
-        // }
-        
+      }
+  
         console.log("paso 1");
         const userCredential = await this.userService.register(email, password);
         const user = userCredential.user;
         console.log("paso 2");
         const userDocRef = doc(collection(this.firestore, 'DatosUsuarios'), user.uid);
-        
+  
         let additionalUserData: any = {
           mail: email,
           role: selectedRole,
@@ -283,177 +331,139 @@ onResize(event: any){
           edad: this.formReg.get('edad')?.value,
           dni: this.formReg.get('dni')?.value
         };
-        
-        const storageBaseUrl = `https://firebasestorage.googleapis.com/v0/b/tp-clinica-online-ba492.appspot.com/o`;
-
-        let imageUrl1: string = "";
-       
+  
         if (selectedRole === 'paciente') {
           
-          const file: File = this.formReg.get('imagenPerfil1')?.value;
-          console.log(file);
-
-          if (file) {
-
-          const imagePath1 = `profile_images/${user.uid}/image1.jpg`;
-          const imageUrl1 = `${storageBaseUrl}/${encodeURIComponent(imagePath1)}`;
+          if (this.imagenPerfil1 && this.imagenPerfil2) 
+              {
+                console.log("entra1?");
+                const image1 = await this.ImagesService.uploadFile(this.imagenPerfil1);
+                const image2 = await this.ImagesService.uploadFile(this.imagenPerfil2);
+  
+                additionalUserData = {
+                  ...additionalUserData,
+                  obrasocial: this.formReg.get('obraSocial')?.value,
+                  aprobadoPorAdmin: true,
+                  imagenPerfil1: image1,
+                  imagenPerfil2: image2,
+                };
+              } 
+              console.log("paso 3, cargado");
+              await setDoc(userDocRef, additionalUserData, { merge: true });
+  
+      }
+      else if (selectedRole === 'especialista') 
+      {
+        if (this,this.imagenPerfil) {
           
-          // await this.uploadImageAndGetURL(imageUrl1, this.formReg.get('imagenPerfil1')?.value as File);
-          try {
-       
-            const downloadURL = await this.uploadImageAndGetURL(imageUrl1, file);
-            console.log('Imagen subida, URL:', downloadURL);
-          } catch (error) {
-            console.error('Error al subir la imagen:', error);
-          }
-        }
-          
-          const imagePath2 = `profile_images/${user.uid}/image2.jpg`;
-          const imageUrl2 = `${storageBaseUrl}/${encodeURIComponent(imagePath2)}`;
-
-          await this.uploadImageAndGetURL(imageUrl2, this.formReg.get('imagenPerfil2')?.value as File);
-          
-          additionalUserData = {
-            ...additionalUserData,
-            obrasocial: this.formReg.get('obraSocial')?.value,
-            aprobadoPorAdmin: true,
-            imagenPerfil1: imageUrl1,
-            imagenPerfil2: imageUrl2,
-        };
-        await setDoc(userDocRef, additionalUserData, { merge: true });
-        
-        } else if (selectedRole === 'especialista') {
-          const imagePath = `profile_images/${user.uid}/image.jpg`;
-          const imageUrl = `${storageBaseUrl}/${encodeURIComponent(imagePath)}`;
-          await this.uploadImageAndGetURL(imageUrl, this.formReg.get('imagenPerfil')?.value as File);
-        
+          const image = await this.ImagesService.uploadFile(this.imagenPerfil);
+            
           additionalUserData = {
             ...additionalUserData,
             especialidad: this.formReg.get('especialidad')?.value,
             otraEspecialidad: this.formReg.get('otraEspecialidad')?.value,
             aprobadoPorAdmin: false,
-            imagenPerfil: imageUrl,
+            imagenPerfil: image,
           };
-          await setDoc(userDocRef, additionalUserData, { merge: true });
+        }
+        await setDoc(userDocRef, additionalUserData, { merge: true });
+        console.log("paso 3, cargado");
         }     
-
-        else if (selectedRole === 'admin') {
-          const imagePath = `profile_images/${user.uid}/image.jpg`;
-          const imageUrl = `${storageBaseUrl}/${encodeURIComponent(imagePath)}`;
-          await this.uploadImageAndGetURL(imageUrl, this.formReg.get('imagenPerfil')?.value as File);
-        
+        else if (selectedRole === 'admin') 
+      {
+        if (this.imagenPerfil0) {
+          
+          const image0 = await this.ImagesService.uploadFile(this.imagenPerfil0);
+            
           additionalUserData = {
             ...additionalUserData,
             aprobadoPorAdmin: true,
-            imagenPerfil: imageUrl,
+            imagenPerfil: image0,
           };
-          await setDoc(userDocRef, additionalUserData, { merge: true });
+        }
+        await setDoc(userDocRef, additionalUserData, { merge: true });
+        console.log("paso 3, cargado");
         }     
+
         
-         console.log("paso 3, cargado");
-    
         if (!user.emailVerified) {
           await this.sendEmailVerification(user);
-    
+  
           Swal.fire({
             icon: 'warning',
             title: 'Faltan validar tus datos antes de iniciar sesión.',
-            text: 'Debes avisarle al usuario para que valide su correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a su dirección de correo.',
+            text: 'Debes verificar tu correo electrónico antes de iniciar sesión. Hemos enviado un correo de verificación a tu dirección de correo.',
           }).then(() => {
-            
-
+  
             if (passwordControl && confirmPasswordControl) {
               passwordControl.reset();
               confirmPasswordControl.reset();
-              //selectedRole.reset();
-              //additionalUserData.reset({ nombre: '', apellido: '', /* ...otros campos... */ });
-              //this.router.navigate(['/home/config']);
+              this.cargarUsuariosPendientes();
+              this.obtenerUsuarios();
+              this.formReg.reset();
+              this.router.navigate(['/home/config']);
             }
           });
+          
         } else {
-    
           Swal.fire({
             icon: 'success',
             title: 'Registro exitoso',
             text: '¡Bienvenido!',
             confirmButtonText: 'OK'
           }).then(() => {
-
-
-
             this.router.navigate(['/login']);
           });
         }
-      }
     } catch (error: any) 
-    {
-      
-      if (error.message === 'Debes verificar tu correo electrónico antes de iniciar sesión.') {
-
-        Swal.fire({
-          icon: 'warning',
-          title: 'Faltan validar tus datos',
-          text: error.message,
-        });
-        this.router.navigate(['/login']);
-      } else if (error.code === 'auth/invalid-email') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error en el correo electrónico',
-          text: 'El formato del correo electrónico es incorrecto. Por favor, verifica.',
-        });
-      } else if (error.code === 'auth/weak-password') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Contraseña débil',
-          text: 'La contraseña es demasiado débil. Debe contener al menos 6 caracteres.',
-        }).then(() => {
-          if (passwordControl && confirmPasswordControl) {
-            passwordControl.reset();
-            confirmPasswordControl.reset();
+        {
+          if (error.message === 'Debes verificar tu correo electrónico antes de iniciar sesión.') {
+    
+            Swal.fire({
+              icon: 'warning',
+              title: 'Faltan validar tus datos',
+              text: error.message,
+            });
+            this.router.navigate(['/login']);
+          } else if (error.code === 'auth/invalid-email') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error en el correo electrónico',
+              text: 'El formato del correo electrónico es incorrecto. Por favor, verifica.',
+            });
+          } else if (error.code === 'auth/weak-password') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Contraseña débil',
+              text: 'La contraseña es demasiado débil. Debe contener al menos 6 caracteres.',
+            }).then(() => {
+              if (passwordControl && confirmPasswordControl) {
+                passwordControl.reset();
+                confirmPasswordControl.reset();
+              }
+            });
+          } else if (error.code === 'auth/email-already-in-use') {
+            Swal.fire({
+              icon: 'error',
+              title: 'Correo electrónico en uso',
+              text: 'El correo electrónico ya está registrado. Inicia sesión en lugar de registrarte.',
+            }); 
+          } else {
+            console.error('Error en el registro:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error en el registro',
+              text: 'Hubo un error al registrar tu cuenta. Por favor, verifica tus datos.',
+            }).then(() => {
+              if (passwordControl && confirmPasswordControl) {
+                passwordControl.reset();
+                confirmPasswordControl.reset();
+              }
+            });
           }
-        });
-      } else if (error.code === 'auth/email-already-in-use') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Correo electrónico en uso',
-          text: 'El correo electrónico ya está registrado. Inicia sesión en lugar de registrarte.',
-        }); 
-      } else {
-        console.error('Error en el registro:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error en el registro',
-          text: 'Hubo un error al registrar tu cuenta. Por favor, verifica tus datos.',
-        }).then(() => {
-          if (passwordControl && confirmPasswordControl) {
-            passwordControl.reset();
-            confirmPasswordControl.reset();
-          }
-        });
-      }
-      return Promise.resolve();
+          return Promise.resolve();
+        }
     }
-
-}
-
-async uploadImageAndGetURL(path: string, file: File): Promise<string> {
-  const storage = getStorage();
-  const storageRef = ref(storage, path);
-
-  try {
-    // Wait for the upload to complete
-    const snapshot = await uploadBytes(storageRef, file, { contentType: 'image/jpeg' });
-
-    // Get the download URL after the upload
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    throw error;
-  }
-}
-
 
   userLogged() {
     this.userService.getCurrentUser().subscribe(
@@ -465,7 +475,6 @@ async uploadImageAndGetURL(path: string, file: File): Promise<string> {
       }
     );
   }
-
 
   cargarUsuariosPendientes() {
     this.userService.obtenerUsuariosPendientesAprobacion()
@@ -487,6 +496,7 @@ async uploadImageAndGetURL(path: string, file: File): Promise<string> {
         });
 
         this.cargarUsuariosPendientes();
+        this.obtenerUsuarios();
       })
       .catch((error) => {
         
@@ -508,6 +518,7 @@ async uploadImageAndGetURL(path: string, file: File): Promise<string> {
         });
 
         this.cargarUsuariosPendientes();
+        this.obtenerUsuarios();
       })
       .catch((error) => {
         Swal.fire({
@@ -516,7 +527,4 @@ async uploadImageAndGetURL(path: string, file: File): Promise<string> {
           text: 'Hubo un error al aprobar el usuario. Por favor, inténtalo de nuevo.',});
       });
   }
-
-
-
 }

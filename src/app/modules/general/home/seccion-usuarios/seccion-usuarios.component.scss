@@ -3,19 +3,21 @@ body {
     background-color: #dddbdb;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    min-height: 100vh;
     font-family: "Euclid Circular A", "Poppins";
   }
-  
+
   .container {
     max-width: 915px;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.575);
+    margin-top: 20px;
+    overflow: auto;
+
   }
   
-
   header {
     text-align: center;
     background-color: #dddbdb;
@@ -252,7 +254,7 @@ body {
       width: 100%;
       border: none;
       background: transparent;
-      color: #f3f3f3;
+      color: #000;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -283,14 +285,87 @@ body {
   }
 
   .users-column {
-    max-height: 400px; /* Puedes ajustar la altura máxima según tus necesidades */
-    overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+    max-height: 400px;
+    overflow-y: auto; 
   }
 
   .sticky-header {
     position: sticky;
     top: 0;
-    background-color: white; /* Puedes ajustar el color de fondo según tus preferencias */
-    z-index: 100; /* Ajusta el índice z para asegurarte de que esté por encima de otros elementos */
+    background-color: white; 
+    z-index: 100; 
+  }
+
+  img{
+    border: 2px solid #ccc;
+    width: 80px; 
+    height: 80px;
+    object-fit: cover;
   }
   
+  .btn-reg {
+
+    cursor: pointer;
+    width: 200px;
+  }
+  
+  .errorMessage {
+    color: red;
+    text-align: center;
+  }
+  input.campo-con-error {
+    border: 1px solid red;
+  }
+
+  .site-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color:#000;
+  }
+  
+  .site-footer p {
+    margin: 0;
+    font-size: 14px; 
+  }
+
+  #crearUsuarioForm {
+    transition: max-height 0.3s ease-out;
+    max-height: 500px; /* Ajusta según sea necesario */
+    overflow: hidden;
+  }
+  
+  .collapsing {
+    max-height: 0 !important;
+    transition: max-height 0.3s ease-in;
+  }
+
+  .slide-in-bottom {
+    animation: slide-in-bottom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  
+  @keyframes slide-in-bottom {
+    0% {
+      transform: translateY(1000px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .btn-user {
+    background-color: #28A745;
+    color: #fff;
+    border: none;
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+  
+  .btn-user:hover {
+    background-color: #04d454;
+  }

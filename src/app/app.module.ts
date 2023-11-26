@@ -22,14 +22,12 @@ import { PacienteGuard } from './guards/paciente.guard';
 import { PacienteAdminGuard } from 'src/app/guards/paciente-admin.guard';
 import { PacienteEspecialistaGuard } from 'src/app/guards/paciente-especialista.guard';
 
-
-
-
 @NgModule({
   declarations: [
     AppComponent,
     BienvenidaComponent,
     SharedComponent,
+
 
   ],
   imports: [

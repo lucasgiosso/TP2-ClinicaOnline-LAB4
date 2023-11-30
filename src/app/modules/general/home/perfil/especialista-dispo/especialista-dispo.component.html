@@ -1,39 +1,49 @@
 <form [formGroup]="disponibilidadForm" (ngSubmit)="guardarDisponibilidad()">
-
-    <label for="especialidad">Especialidad:</label>
+  
+  <div class="centered-content">
+    <h3>Disponibilidad horaria</h3>
+    <!-- <label for="especialidad">Especialidad:</label>
     <select id="especialidad" formControlName="especialidad">
         <option value="Ginecologia">Ginecologia</option>
         <option value="Traumatologia">Traumatologia</option>
         <option value="Kinesiologia">Kinesiologia</option>
         <option value="Nutricionista">Nutricionista</option>
-    </select>
-
-    <label for="dia">Día:</label>
-    <select id="dia" formControlName="dia">
-      <option value="Lunes">Lunes</option>
-      <option value="Martes">Martes</option>
-      <option value="Miercoles">Miércoles</option>
-      <option value="Jueves">Jueves</option>
-      <option value="Viernes">Viernes</option>
-
-    </select>
+    </select> -->
+  </div>
   
-    <label for="horaInicio">Hora de inicio:</label>
-    <input type="time" id="horaInicio" formControlName="horaInicio" step="900" required>
-
-    <label for="horaFin">Hora de fin:</label>
-    <input type="time" id="horaFin" formControlName="horaFin" step="900" required>
+  <div class="centered-content">
+    <label>Días:</label>
+    <div *ngFor="let dia of ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']">
+      <input type="checkbox" [id]="dia" [value]="dia" [checked]="isDiaSeleccionado(dia)" required (change)="toggleDia(dia)">
+      <label [for]="dia">{{ dia }}</label>
+    </div>
+  </div>
   
-    <button type="submit">Guardar Disponibilidad</button>
+    <div class="centered-content">
+      <label for="horaInicio">Hora de inicio:</label>
+      <select id="horaInicio" formControlName="horaInicio" required >
+        <option *ngFor="let hora of horasDisponibles" [value]="hora">{{ hora }}</option>
+      </select>
+    
+      <label for="horaFin">Hora de fin:</label>
+      <select id="horaFin" formControlName="horaFin" required >
+        <option *ngFor="let hora of horasDisponibles" [value]="hora">{{ hora }}</option>
+      </select>
+    </div>
+    <input type="hidden" formControlName="id" />
+
+    <button type="submit" *ngIf="mostrarBotonGuardar">Guardar Disponibilidad</button>
 </form>
 
   <div class="centered-content">
     <div *ngIf="horariosDisponibles.length > 0" class="horarios-container">
       <h3>Horarios Disponibles</h3>
       <ul>
-        <li *ngFor="let horario of horariosDisponibles">
-            {{ horario.especialidad }} - {{ horario.dia }} - {{ horario.horaInicio }} a {{ horario.horaFin }}
-        </li>
+        <li *ngFor="let horario of especialistaService.disponibilidad$ | async">
+            {{ getDiasString(horario.dias) }} - {{ horario.horaInicio }} a {{ horario.horaFin }}
+            <button (click)="modificarHorario(horario)">Modificar</button>
+            <button type="button" *ngIf="editandoHorario" (click)="cancelarModificacion()">Cancelar</button>
+          </li>
       </ul>
     </div>
   </div>

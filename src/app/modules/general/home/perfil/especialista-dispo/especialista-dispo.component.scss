@@ -4,11 +4,11 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    margin-top: 20px; 
+    margin-top: 10px; 
   }
 
   .horarios-container {
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto; 
   }
 
@@ -34,4 +34,10 @@
   button[type="submit"].incomplete {
     background-color: #ccc; 
     cursor: not-allowed;
+  }
+
+  
+
+  label{
+    margin: 5px;
   }

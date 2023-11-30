@@ -1,46 +1,54 @@
 
 <body>
   
-<div class="user-profile" *ngIf="usuarioLogueado">
-  <div class="user-info">
-    <h2>{{ usuarioLogueado.nombre }} {{ usuarioLogueado.apellido }}</h2>
-    <p>Edad: {{ usuarioLogueado.edad }}</p>
-    <p>DNI: {{ usuarioLogueado.dni }}</p>
-    <p>Mail: {{ usuarioLogueado.mail }}</p>
+  <div class="user-container">
 
-
-    <ng-container *ngIf="usuarioLogueado.role === 'admin'">
-    <p>Imagen de perfil:</p>
-    <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
-  </ng-container>
+  <div class="user-profile" *ngIf="usuarioLogueado">
     
-    <ng-container *ngIf="usuarioLogueado.role === 'paciente'">
+    <div class="user-info">
+        <h2>{{ usuarioLogueado.nombre }} {{ usuarioLogueado.apellido }}</h2>
+        <p>Edad: {{ usuarioLogueado.edad }}</p>
+        <p>DNI: {{ usuarioLogueado.dni }}</p>
+        <p>Mail: {{ usuarioLogueado.mail }}</p>
 
-    <p>Obra Social: {{ usuarioLogueado.obrasocial }}</p>
+        <ng-container *ngIf="usuarioLogueado.role === 'admin'">
+        <p>Imagen de perfil:</p>
+        <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
+      </ng-container>
+        
+        <ng-container *ngIf="usuarioLogueado.role === 'paciente'">
 
-    <p>Imagen de perfil 1:</p>
-    <img [src]="usuarioLogueado.imagenPerfil1" alt="Imagen de perfil1">
+        <p>Obra Social: {{ usuarioLogueado.obrasocial }}</p>
 
-    <p>Imagen de perfil 2:</p>
-    <img [src]="usuarioLogueado.imagenPerfil2" alt="Imagen de perfil2">
-  </ng-container>
-    
-    <ng-container *ngIf="usuarioLogueado.role === 'especialista'">
+        <p>Imagen de perfil 1:</p>
+        <img [src]="usuarioLogueado.imagenPerfil1" alt="Imagen de perfil1">
 
-    <p>Especialidad: {{ usuarioLogueado.especialidad }}</p>
+        <p>Imagen de perfil 2:</p>
+        <img [src]="usuarioLogueado.imagenPerfil2" alt="Imagen de perfil2">
+      </ng-container>
+        
+        <ng-container *ngIf="usuarioLogueado.role === 'especialista'">
 
-    <p>Otra Especialidad: {{ usuarioLogueado.otraEspecialidad }}</p>
+          <p>Especialidad: {{ usuarioLogueado.especialidad === 'otra' ? usuarioLogueado.otraEspecialidad : usuarioLogueado.especialidad }}</p>
 
-    <p>Imagen de perfil:</p>
-    <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
-  </ng-container>
+        <ng-container *ngIf="usuarioLogueado.especialidad.trim().length === 0">
+          <p>Otra Especialidad: {{ usuarioLogueado.otraEspecialidad }}</p>
+        </ng-container>
+
+        <p>Imagen de perfil:</p>
+        <img [src]="usuarioLogueado.imagenPerfil" alt="Imagen de perfil">
+      </ng-container>
+    </div>
+
   </div>
 
+  <div class="user-profile" *ngIf="usuarioLogueado">
     <div class="user-actions">
       <ng-container *ngIf="usuarioLogueado.role === 'especialista'">
         <app-especialista-dispo></app-especialista-dispo>
       </ng-container>
     </div>
+  </div>
 
 </div>
 </body>

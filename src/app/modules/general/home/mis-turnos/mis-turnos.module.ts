@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MisTurnosComponent } from './mis-turnos.component';
 import { FiltroComponent } from './filtro/filtro.component';
 import { SolicitarTurnoComponent } from '../solicitar-turno/solicitar-turno.component';
+import { FilterEspPipe } from 'src/app/pipes/filter-esp.pipe';
 
 
 
@@ -17,15 +18,14 @@ import { SolicitarTurnoComponent } from '../solicitar-turno/solicitar-turno.comp
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-  
-    
+   
   ],
   declarations: [
     MisTurnosComponent,
     FiltroComponent,
-    SolicitarTurnoComponent
+    SolicitarTurnoComponent,
+    FilterEspPipe
     
-
   ]
 })
 export class MisTurnosModule { }

@@ -105,8 +105,8 @@ export class RegisterComponent implements OnInit{
       recaptcha: ['', Validators.required]
     });
 
-    //this.sitekey = "6LcxAQwpAAAAAKm8-ZSRy42mich3t-WNgNhSASgr"; // QA
-    this.sitekey = "6LfICxIpAAAAAIrr9b-Ky36S61Q_yz763LCA5x3G"; // PROD
+    this.sitekey = "6LcxAQwpAAAAAKm8-ZSRy42mich3t-WNgNhSASgr"; // QA
+    //this.sitekey = "6LfICxIpAAAAAIrr9b-Ky36S61Q_yz763LCA5x3G"; // PROD
 
     setTimeout(() => {
     this.showLoading = false;

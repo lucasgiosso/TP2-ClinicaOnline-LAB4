@@ -178,6 +178,112 @@ export class UserService {
     }
   }
 
+  async obtenerListaEspecialidades(): Promise<string[]> {
+    try {
+      const usuariosQuery = query(collection(this.firestore, 'DatosUsuarios'));
+      const querySnapshot: QuerySnapshot<any> = await getDocs(usuariosQuery);
+  
+      const especialidadesSet = new Set<string>();
+  
+      querySnapshot.forEach((doc) => {
+        const especialidad = doc.data().especialidad;
+        const otraEspecialidad = doc.data().otraEspecialidad;
+  
+        // Si es "otra" y no está en el conjunto, agrega la otraEspecialidad
+        if (especialidad === 'otra' && otraEspecialidad && !especialidadesSet.has(otraEspecialidad)) {
+          especialidadesSet.add(otraEspecialidad);
+        } else if (especialidad) {
+          // Si no es "otra", simplemente agrégala al conjunto
+          especialidadesSet.add(especialidad);
+        }
+      });
+  
+      const especialidades: string[] = Array.from(especialidadesSet);
+  
+      return especialidades;
+    } catch (error) {
+      console.error('Error al obtener lista de especialidades:', error);
+      throw error;
+    }
+  }
+  
+
+  // async obtenerEspecialistasPorEspecialidad(especialidad: string): Promise<any[]> {
+  //   try {
+  //     const usuariosQuery = query(
+  //       collection(this.firestore, 'DatosUsuarios'),
+  //       where('especialidad', '==', especialidad)
+  //     );
+  
+  //     const querySnapshot: QuerySnapshot<any> = await getDocs(usuariosQuery);
+  
+  //     const especialistas: any[] = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const { nombre, apellido, imagenPerfil } = doc.data();
+  //       const especialista = { id: doc.id, nombre, apellido, imagenPerfil };
+  //       especialistas.push(especialista);
+  //     });
+  
+  //     if (especialistas.length === 0) {
+  //       const otraEspecialidadQuery = query(
+  //         collection(this.firestore, 'DatosUsuarios'),
+  //         where('otraEspecialidad', '==', especialidad)
+  //       );
+  
+  //       const otraEspecialidadSnapshot: QuerySnapshot<any> = await getDocs(otraEspecialidadQuery);
+  
+  //       otraEspecialidadSnapshot.forEach((doc) => {
+  //         const { nombre, apellido } = doc.data();
+  //         const especialista = { id: doc.id, nombre, apellido };
+  //         especialistas.push(especialista);
+  //       });
+  //     }
+  
+  //     return especialistas;
+  //   } catch (error) {
+  //     console.error('Error al obtener especialistas por especialidad:', error);
+  //     throw error;
+  //   }
+  // }
+  
+  async obtenerEspecialistasPorEspecialidad(especialidad: string): Promise<any[]> {
+    try {
+      const usuariosQuery = query(
+        collection(this.firestore, 'DatosUsuarios'),
+        where('especialidad', '==', especialidad)
+      );
+  
+      const querySnapshot: QuerySnapshot<any> = await getDocs(usuariosQuery);
+      const especialistas: any[] = [];
+  
+      querySnapshot.forEach((doc) => {
+        const { nombre, apellido, imagenPerfil } = doc.data();
+        const especialista = { id: doc.id, nombre, apellido, imagenPerfil };
+        especialistas.push(especialista);
+      });
+  
+      if (especialistas.length === 0) {
+        const otraEspecialidadQuery = query(
+          collection(this.firestore, 'DatosUsuarios'),
+          where('otraEspecialidad', '==', especialidad)
+        );
+  
+        const otraEspecialidadSnapshot: QuerySnapshot<any> = await getDocs(otraEspecialidadQuery);
+  
+        otraEspecialidadSnapshot.forEach((doc) => {
+          const { nombre, apellido, imagenPerfil } = doc.data();
+          const especialista = { id: doc.id, nombre, apellido, imagenPerfil };
+          especialistas.push(especialista);
+        });
+      }
+  
+      return especialistas;
+    } catch (error) {
+      console.error('Error al obtener especialistas por especialidad:', error);
+      throw error;
+    }
+  }
+
   async obtenerUsuariosConFotoPerfil(email: string): Promise<any[]> {
     try {
       const usuariosQuery = query(collection(this.firestore, 'DatosUsuarios'), where('mail', '==', email));
@@ -206,6 +312,83 @@ export class UserService {
       throw error;
     }
   }
+
+  // async obtenerEspecialistasConFotoPerfil(especialista: string): Promise<{ nombre: string; imagenPerfilUrl: string }[]> {
+  //   try {
+  //     const especialistasQuery = query(
+  //       collection(this.firestore, 'DatosUsuarios'),
+  //       where('role', '==', 'especialista')
+  //     );
+  
+  //     const querySnapshot: QuerySnapshot<any> = await getDocs(especialistasQuery);
+  
+  //     const especialistas: { nombre: string; imagenPerfilUrl: string }[] = [];
+  //     querySnapshot.forEach(async (doc) => {
+  //       const usuario = {
+  //         id: doc.id,
+  //         ...doc.data(),
+  //         imagenPerfilUrl: doc.data().imagenPerfil,
+  //         especialidad: doc.data().especialidad,
+  //       };
+  //       especialistas.push(usuario);
+  //     });
+  
+  //     return especialistas;
+  //   } catch (error) {
+  //     console.error('Error al obtener especialistas:', error);
+  //     throw error;
+  //   }
+  // }
+
+  async obtenerEspecialistasConFotoPerfil(especialidad: string): Promise<{ nombre: string; imagenPerfilUrl: string }[]> {
+    try {
+      const especialistasQuery = query(
+        collection(this.firestore, 'DatosUsuarios'),
+        where('role', '==', 'especialista')
+      );
+  
+      const querySnapshot: QuerySnapshot<any> = await getDocs(especialistasQuery);
+  
+      let especialistas: { nombre: string; imagenPerfilUrl: string }[] = [];
+  
+      // Si la primera consulta no devuelve resultados, realiza una segunda consulta
+      if (querySnapshot.empty) {
+        const otraEspecialidadQuery = query(
+          collection(this.firestore, 'DatosUsuarios'),
+          where('otraEspecialidad', '==', especialidad)
+        );
+  
+        const otraEspecialidadSnapshot: QuerySnapshot<any> = await getDocs(otraEspecialidadQuery);
+  
+        otraEspecialidadSnapshot.forEach((doc) => {
+          const usuario = {
+            id: doc.id,
+            ...doc.data(),
+            imagenPerfilUrl: doc.data().imagenPerfil,
+            especialidad: doc.data().especialidad,
+          };
+          especialistas.push(usuario);
+        });
+      } else {
+        // Si la primera consulta devuelve resultados, utiliza esos resultados
+        querySnapshot.forEach((doc) => {
+          const usuario = {
+            id: doc.id,
+            ...doc.data(),
+            imagenPerfilUrl: doc.data().imagenPerfil,
+            especialidad: doc.data().especialidad,
+          };
+          especialistas.push(usuario);
+        });
+      }
+  
+      return especialistas;
+    } catch (error) {
+      console.error('Error al obtener especialistas:', error);
+      throw error;
+    }
+  }
+  
 
   async obtenerInfoUsuarioActual(): Promise<any | null> {
     try {

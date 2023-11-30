@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Firestore, collection, addDoc, getDocs, query, where, CollectionReference, DocumentData, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, getDocs, query, where, CollectionReference, DocumentData, doc, getDoc, QuerySnapshot } from '@angular/fire/firestore';
 
 interface Turno {
   id: string; 
@@ -47,15 +47,38 @@ export class TurnosService {
     return turnosSnapshot.docs.map(doc => doc.data() as Turno);
   }
 
+  async obtenerTurnos(): Promise<any[]> {
+    try {
+      const turnosQuery = query(
+        collection(this.firestore, 'turnos')
+      );
+  
+      const querySnapshot: QuerySnapshot<any> = await getDocs(turnosQuery);
+  
+      const turnos: any[] = [];
+      querySnapshot.forEach((doc) => {
+  
+        const turnos = {
+          id: doc.id,
+          ...doc.data(),
+        };
+        turnos.push(turnos);
+      });
+  
+      return turnos;
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+      throw error;
+    }
+  }
+
   async solicitarTurno(
     pacienteId: number,
     especialidad: string,
     especialista: string,
-    year: number,
-    month: number,
     day: number,
-    horaInicio: string,
-    horaFin: string
+    horario: string,
+
   ) {
     //const paciente = await this.obtenerInformacionPaciente(pacienteId);
     const nuevoTurno = {
@@ -68,10 +91,10 @@ export class TurnosService {
       //   mail: paciente.mail,
       //   nombre: paciente.nombre,
       // },
-      fecha: new Date(year, month - 1, day),
+      fecha: new Date(day),
       estado: 'pendiente',
-      horaInicio,
-      horaFin,
+      horario,
+
     };
 
     try {

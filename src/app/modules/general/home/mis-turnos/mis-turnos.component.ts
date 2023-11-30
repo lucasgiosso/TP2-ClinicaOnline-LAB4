@@ -20,6 +20,7 @@ export class MisTurnosComponent implements OnInit{
 
   btnVolver = 'Volver a home';
   showLoading: boolean = true;
+  filtro: string = '';
 
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
 
@@ -32,8 +33,8 @@ export class MisTurnosComponent implements OnInit{
   turnos: any[] = [];
   turno: any;
   turnosFiltrados: any[] = [];
-  especialidades: string[] = ['Cardiología', 'Dermatología', 'Oftalmología'];
-  especialistas: string[] = ['Dr. García', 'Dra. López', 'Dr. Martínez'];
+  especialidades: string[] = [];
+  especialistas: string[] = [];
   fechaSeleccionada: Date = new Date();
   horaInicio: string = '';
   horaFin: string = '';
@@ -92,21 +93,21 @@ export class MisTurnosComponent implements OnInit{
     });
   }
 
-  filtrarTurnos(filtro: any) {
-    
-    this.turnosFiltrados = this.turnos.filter(
-      (turno) =>
-        (!filtro.especialidad || turno.especialidad === filtro.especialidad) &&
-        (!filtro.especialista || turno.especialista === filtro.especialista)
-    );
+  async obtenerTurnos() {
+    try {
+      this.turnos = await this.turnosService.obtenerTurnos();
+    } catch (error) {
+      console.error('Error al obtener usuarios en el componente:', error);
+    }
   }
+
 
   solicitarTurno() {
 
     const especialidad = 'Cardiología'; 
     const especialista = 'Dr. García'; 
 
-    const nuevoTurno = this.turnosService.solicitarTurno(this.pacienteId, especialidad, especialista, this.selectedYear, this.selectedMonth,this.selectedDay, this.horaInicio , this.horaFin);
+    const nuevoTurno = this.turnosService.solicitarTurno(this.pacienteId, especialidad, especialista,this.selectedDay, this.horaInicio);
     console.log('Nuevo turno solicitado:', nuevoTurno);
 
   }

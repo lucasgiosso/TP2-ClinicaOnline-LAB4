@@ -28,7 +28,6 @@ import { PacienteEspecialistaGuard } from 'src/app/guards/paciente-especialista.
     BienvenidaComponent,
     SharedComponent,
 
-
   ],
   imports: [
     BrowserModule,
